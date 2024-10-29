@@ -1,23 +1,80 @@
 import { Box, createListCollection, Heading, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsClockHistory } from "react-icons/bs";
 import HomeControls from "../components/home/HeroControls";
 import HomeBoards from "../components/home/HomeBoards";
+import { SORT_BY_OPTIONS } from "../constants";
+import { getData, postData } from "../utils";
+import { toaster } from "../components/ui/toaster";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
   const [sortCriteria, setSortCriteria] = useState("");
+  const [boards, setBoards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const sortBy = createListCollection({
-    items: [
-      { label: "Mostly Recently Active", value: "MOST_RECENTLY_ACTIVE" },
-      { label: "Last Recently Active", value: "LAST_RECENTLY_ACTIVE" },
-      { label: "Alphabetically A-Z", value: "ALPHABETICALLY_A_Z" },
-      { label: "Alphabetically Z-A", value: "ALPHABETICALLY_Z_A" },
-    ],
-  });
+  const sortBy = createListCollection(SORT_BY_OPTIONS);
+
+  function createBoard(title, color) {
+    encodeURIComponent;
+    const url = `${
+      import.meta.env.VITE_CREATE_BOARD_URL_BASE
+    }/?name=${encodeURIComponent(title)}&prefs_background=${color}&key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+    const promise = postData(url).then((response) => {
+      navigate(`/boards/${response.data.id}`);
+    });
+
+    toaster.promise(promise, {
+      success: {
+        title: "Your board has been created successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to create board!",
+        description: "Something wrong with the creation",
+      },
+      loading: { title: "Creating...", description: "Please wait" },
+    });
+  }
+
+  function handleBoardClick(board) {
+    // localstorage logic
+    navigate(`/boards/${board.id}`);
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = `${import.meta.env.VITE_ALL_BOARDS_URL_BASE}/?key=${
+        import.meta.env.VITE_TRELLO_API_KEY
+      }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+      try {
+        const response = await getData(url);
+        setBoards(response.data);
+        setLoading(false);
+      } catch (error) {
+        toaster.create({
+          description: "Failed to load boards!",
+          type: "error",
+        });
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
-    <Box ml={12}>
+    <Box
+      display={"flex"}
+      flexDirection={"column"}
+      width={"8/12"}
+      margin={"0 auto"}
+    >
       <Heading size="4xl" my={8}>
         Trello Boards
       </Heading>
@@ -45,7 +102,12 @@ export default function HomePage() {
         setSortCriteria={setSortCriteria}
       />
 
-      <HomeBoards />
+      <HomeBoards
+        createBoard={createBoard}
+        boards={boards}
+        handleBoardClick={handleBoardClick}
+        loading={loading}
+      />
     </Box>
   );
 }

@@ -17,12 +17,12 @@ export default function HeroControls({
   setSortCriteria,
 }) {
   return (
-    <Flex justifyContent={"space-around"} alignItems={"center"} ml={20}>
+    <Flex justifyContent={"space-between"} alignItems={"center"}>
       <Box>
         <SelectRoot
           collection={sortBy}
           size="sm"
-          width="320px"
+          width="300px"
           position={"relative"}
         >
           <SelectLabel>Sort By</SelectLabel>

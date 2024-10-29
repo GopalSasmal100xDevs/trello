@@ -1,4 +1,4 @@
-import { Box, Flex, Input, Stack, Text } from "@chakra-ui/react";
+import { Card, Flex, HStack, Input, Stack, Text } from "@chakra-ui/react";
 import { Button } from "../ui/button";
 import {
   DialogActionTrigger,
@@ -14,25 +14,24 @@ import { Field } from "../ui/field";
 import { useRef, useState } from "react";
 import { BOARD_COLORS } from "../../constants";
 
-export default function CreateBoardsDialog() {
+export default function CreateBoardsDialog({ createBoard }) {
   const ref = useRef(null);
   const [boardTitle, setBoardTitle] = useState("");
   const [selectBoardColor, setSelectBoardColor] = useState(BOARD_COLORS[0]);
   return (
     <DialogRoot initialFocusEl={() => ref.current} placement={"center"}>
       <DialogTrigger asChild>
-        <Box
-          border={"2px dashed"}
-          width={300}
-          height={100}
-          bgGradient={"red"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          cursor={"pointer"}
-        >
-          <Text> + Create Your Board</Text>
-        </Box>
+        <Card.Root width="410px">
+          <Card.Body>
+            <HStack mb="6" gap="3">
+              <Stack gap="0">
+                <Text fontWeight="semibold" textStyle="sm">
+                  + Create Your Board
+                </Text>
+              </Stack>
+            </HStack>
+          </Card.Body>
+        </Card.Root>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader placeItems={"center"}>
@@ -60,7 +59,7 @@ export default function CreateBoardsDialog() {
               </Flex>
             </Field>
             <Field
-              label="First Name"
+              label="Board Name"
               invalid={boardTitle === ""}
               errorText="Title is required for board!"
             >
@@ -69,7 +68,7 @@ export default function CreateBoardsDialog() {
                 placeholder="Board Title"
                 required={true}
                 value={boardTitle}
-                onChange={(e) => setBoardTitle(e.target.value.trim())}
+                onChange={(e) => setBoardTitle(e.target.value)}
               />
             </Field>
           </Stack>
@@ -78,7 +77,9 @@ export default function CreateBoardsDialog() {
           <DialogActionTrigger asChild>
             <Button variant="outline">Cancel</Button>
           </DialogActionTrigger>
-          <Button onClick={() => {}}> + Create Board</Button>
+          <Button onClick={() => createBoard(boardTitle, selectBoardColor)}>
+            + Create Board
+          </Button>
         </DialogFooter>
       </DialogContent>
     </DialogRoot>
