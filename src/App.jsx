@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import MainLayout from "./layouts/MainLayout";
+import BoardDetailsPage from "./pages/BoardDetailsPage";
 
 export default function App() {
   return <Routing />;
@@ -16,7 +17,7 @@ function Routing() {
     createRoutesFromElements(
       <Route path="/" element={<MainLayout />}>
         <Route path="/" index element={<HomePage />} />
-        <Route path="/boards/:id" element={<h1>Board</h1>} />
+        <Route path="/boards/:id" element={<BoardDetailsPage />} />
         <Route path="*" element={<h1>Not found</h1>} />
       </Route>
     )

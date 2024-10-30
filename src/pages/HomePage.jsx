@@ -19,7 +19,7 @@ export default function HomePage() {
   function createBoard(title, color) {
     encodeURIComponent;
     const url = `${
-      import.meta.env.VITE_CREATE_BOARD_URL_BASE
+      import.meta.env.VITE_BOARD_BASE_URL
     }/?name=${encodeURIComponent(title)}&prefs_background=${color}&key=${
       import.meta.env.VITE_TRELLO_API_KEY
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
@@ -48,7 +48,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const url = `${import.meta.env.VITE_ALL_BOARDS_URL_BASE}/?key=${
+      const url = `${import.meta.env.VITE_ALL_BOARDS_BASE_URL}/?key=${
         import.meta.env.VITE_TRELLO_API_KEY
       }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
 
@@ -56,7 +56,7 @@ export default function HomePage() {
         const response = await getData(url);
         setBoards(response.data);
         setLoading(false);
-      } catch (error) {
+      } catch (_error) {
         toaster.create({
           description: "Failed to load boards!",
           type: "error",
