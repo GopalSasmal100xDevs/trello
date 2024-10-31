@@ -22,6 +22,7 @@ export default function CheckList({ card }) {
   const [checklistTitle, setChecklistTitle] = useState("");
   const [cards, setCards] = useState([]);
   const [cardsLoading, setCardsLoading] = useState(true);
+  const [reloadChecklist, setReloadChecklist] = useState(false);
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
@@ -79,12 +80,12 @@ export default function CheckList({ card }) {
         setCardsLoading(false);
       }
     },
-    [id]
+    [id, reloadChecklist]
   );
 
   useEffect(() => {
     fetchCheckList(id);
-  }, [id, openCheckListInput]);
+  }, [id, openCheckListInput, reloadChecklist]);
 
   return (
     <Box>
@@ -136,7 +137,13 @@ export default function CheckList({ card }) {
       ) : (
         <Flex flexDirection={"column"} gap={10}>
           {cards.length > 0 ? (
-            cards.map((card, index) => <TodoList card={card} key={index} />)
+            cards.map((card, index) => (
+              <TodoList
+                card={card}
+                key={index}
+                setReloadChecklist={setReloadChecklist}
+              />
+            ))
           ) : (
             <Center pt={10} display={"flex"} alignItems={"center"} gap={2}>
               <MdPlaylistRemove size={25} /> No checklists found

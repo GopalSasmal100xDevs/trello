@@ -92,7 +92,7 @@ export default function BoardDetailsPage() {
   }, [id, fetchBoardDetails, fetchBoardLists]);
 
   return (
-    <Box position={"absolute"} overflow={"hidden"}>
+    <Box position={"absolute"} width={"auto"} overflow={"auto"}>
       <Navbar board={board} loading={loading} />
       {listsLoading ? (
         <Box display={"flex"} flexDirection={"row"} gap={10} mt={8} ml={20}>

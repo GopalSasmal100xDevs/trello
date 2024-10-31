@@ -1,11 +1,11 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { Button } from "../ui/button";
 import TodoProgressBar from "./TodoProgressBar";
 import Todo from "./Todo";
 
-export default function TodoList({ card }) {
-  const { name, checkItems } = card;
+export default function TodoList({ card, setReloadChecklist }) {
+  const { id, name, checkItems } = card;
 
   return (
     <Flex flexDirection={"column"} gap={2} pt={10}>
@@ -23,13 +23,11 @@ export default function TodoList({ card }) {
         <TodoProgressBar checkItems={checkItems} />
       ) : null}
 
-      <Todo checkItems={checkItems} />
-
-      <Box pt={2}>
-        <Button colorPalette={"gray"} variant="surface">
-          Add an item
-        </Button>
-      </Box>
+      <Todo
+        checkItems={checkItems}
+        id={id}
+        setReloadChecklist={setReloadChecklist}
+      />
     </Flex>
   );
 }

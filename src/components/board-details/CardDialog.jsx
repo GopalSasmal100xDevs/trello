@@ -1,4 +1,4 @@
-import { Card, Flex } from "@chakra-ui/react";
+import { Card, Flex, Text } from "@chakra-ui/react";
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -17,7 +17,9 @@ export default function CardDialog({ card }) {
     <DialogRoot lazyMount preventScroll size={"lg"}>
       <DialogTrigger asChild>
         <Card.Root variant={"subtle"} size={"sm"} cursor={"pointer"}>
-          <Card.Body>{name}</Card.Body>
+          <Card.Body>
+            <Text fontSize={"14px"}>{name}</Text>
+          </Card.Body>
         </Card.Root>
       </DialogTrigger>
       <DialogContent>
