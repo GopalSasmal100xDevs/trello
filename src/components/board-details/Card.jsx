@@ -1,5 +1,5 @@
 import CardDialog from "./CardDialog";
 
-export default function CardComponent({ card }) {
-  return <CardDialog card={card} />;
+export default function CardComponent({ card, deleteCard }) {
+  return <CardDialog card={card} deleteCard={deleteCard} />;
 }

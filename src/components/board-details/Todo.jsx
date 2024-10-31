@@ -7,8 +7,13 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { postData } from "../../utils";
 import { toaster } from "../ui/toaster";
 
-export default function Todo({ checkItems, id, setReloadChecklist }) {
-  const [openItemInput, setOpenItemInput] = useState(true);
+export default function Todo({
+  checkItems,
+  id,
+  setReloadChecklist,
+  deleteItemOnCheckList,
+}) {
+  const [openItemInput, setOpenItemInput] = useState(false);
   const [item, setItem] = useState("");
 
   function keyEventHandler(e) {
@@ -51,7 +56,11 @@ export default function Todo({ checkItems, id, setReloadChecklist }) {
     <>
       <Flex flexDirection={"column"} gap={4} pt={6}>
         {checkItems?.map((item, index) => (
-          <TodoItem key={index} item={item} />
+          <TodoItem
+            key={index}
+            item={item}
+            deleteItemOnCheckList={deleteItemOnCheckList}
+          />
         ))}
       </Flex>
       <Box pt={2}>
@@ -95,8 +104,8 @@ export default function Todo({ checkItems, id, setReloadChecklist }) {
   );
 }
 
-export function TodoItem({ item }) {
-  const { name } = item;
+export function TodoItem({ item, deleteItemOnCheckList }) {
+  const { id, name } = item;
 
   const [checked, setChecked] = useState(false);
   const [openItemDel, setOpenItemDel] = useState(false);
@@ -136,7 +145,11 @@ export function TodoItem({ item }) {
           top={8}
         >
           <Card.Body>
-            <Button variant={"surface"} colorPalette={"red"}>
+            <Button
+              variant={"surface"}
+              colorPalette={"red"}
+              onClick={() => deleteItemOnCheckList(id)}
+            >
               <AiTwotoneDelete size={20} />
               Delete
             </Button>

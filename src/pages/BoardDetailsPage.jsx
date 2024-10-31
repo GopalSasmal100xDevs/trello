@@ -92,7 +92,7 @@ export default function BoardDetailsPage() {
   }, [id, fetchBoardDetails, fetchBoardLists]);
 
   return (
-    <Box position={"absolute"} width={"auto"} overflow={"auto"}>
+    <Box position={"absolute"} width={"full"}>
       <Navbar board={board} loading={loading} />
       {listsLoading ? (
         <Box display={"flex"} flexDirection={"row"} gap={10} mt={8} ml={20}>
@@ -104,14 +104,15 @@ export default function BoardDetailsPage() {
         <Box
           display={"flex"}
           flexDirection={"row"}
-          height={"full"}
-          width={"100%"}
+          height={"screen"}
+          width={"auto"}
           gap={4}
           pt={8}
           pl={20}
           position={"relative"}
           mt={"12px"}
           flexGrow={1}
+          overflowy={"auto"}
         >
           {boardLists.map((list, index) => (
             <ListCard key={index} list={list} />

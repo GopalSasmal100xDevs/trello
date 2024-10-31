@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { Field } from "../ui/field";
 import { useCallback, useEffect, useState } from "react";
-import { getData, postData } from "../../utils";
+import { deleteData, getData, postData } from "../../utils";
 import { toaster } from "../ui/toaster";
 import TodoList from "./TodoList";
 import { MdPlaylistRemove } from "react-icons/md";
@@ -61,7 +61,6 @@ export default function CheckList({ card }) {
 
   const fetchCheckList = useCallback(
     async (id) => {
-      console.count("fetchCheckList function call");
       const url = `${
         import.meta.env.VITE_CARD_DETAILS_BASE_URL
       }/${id}/checklists?key=${import.meta.env.VITE_TRELLO_API_KEY}&token=${
@@ -82,6 +81,30 @@ export default function CheckList({ card }) {
     },
     [id, reloadChecklist]
   );
+
+  async function deleteItemOnCheckList(idCheckItem) {
+    const url = `${
+      import.meta.env.VITE_CARD_DETAILS_BASE_URL
+    }/${id}/checkItem/${idCheckItem}?key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+    const promise = deleteData(url).then(() => {
+      setReloadChecklist((prev) => !prev);
+    });
+
+    toaster.promise(promise, {
+      success: {
+        title: "Your item on checklist has been deleted successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to delete item on checklist!",
+        description: "Something wrong with the creation",
+      },
+      loading: { title: "Creating...", description: "Please wait" },
+    });
+  }
 
   useEffect(() => {
     fetchCheckList(id);
@@ -142,6 +165,7 @@ export default function CheckList({ card }) {
                 card={card}
                 key={index}
                 setReloadChecklist={setReloadChecklist}
+                deleteItemOnCheckList={deleteItemOnCheckList}
               />
             ))
           ) : (

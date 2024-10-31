@@ -13,3 +13,7 @@ export function postData(url) {
 export function getData(url) {
   return axios.get(url);
 }
+
+export function deleteData(url) {
+  return axios.delete(url);
+}

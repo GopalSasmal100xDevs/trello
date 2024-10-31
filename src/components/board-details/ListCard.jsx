@@ -1,20 +1,32 @@
-import { Card, Flex, Input, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  Center,
+  Flex,
+  Input,
+  Separator,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
-import { getData, postData } from "../../utils";
+import { deleteData, getData, postData } from "../../utils";
 import CardComponent from "./Card";
 import { toaster } from "../ui/toaster";
 import { Button } from "../ui/button";
+import { BsThreeDots } from "react-icons/bs";
+import { MdArchive } from "react-icons/md";
+import { IoArchive } from "react-icons/io5";
+import { CgPlayListAdd } from "react-icons/cg";
 
 export default function ListCard({ list }) {
-  const { id, name, color } = list;
+  const { id } = list;
   const [activeAddCard, setActiveAddCard] = useState(false);
   const [cardTitle, setCardTitle] = useState("");
   const [cards, setCards] = useState([]);
 
   const fetchCardLists = useCallback(
     async (listId) => {
-      console.count("fetchCardLists function call");
       const url = `${
         import.meta.env.VITE_LIST_DETAILS_BASE_URL
       }/${listId}/cards?key=${import.meta.env.VITE_TRELLO_API_KEY}&token=${
@@ -61,6 +73,26 @@ export default function ListCard({ list }) {
       });
     }
   }
+  async function deleteCard(id) {
+    const url = `${import.meta.env.VITE_CARD_DETAILS_BASE_URL}/${id}?key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+    const promise = deleteData(url).then(() => {
+      setActiveAddCard((prev) => !prev);
+    });
+    toaster.promise(promise, {
+      success: {
+        title: "Your board has been deleted successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to delete board!",
+        description: "Something wrong with the creation",
+      },
+      loading: { title: "Creating...", description: "Please wait" },
+    });
+  }
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
@@ -76,14 +108,12 @@ export default function ListCard({ list }) {
 
   return (
     <Card.Root width={"285px"} maxW="sm">
-      <Card.Header>
-        <Card.Title>{name}</Card.Title>
-      </Card.Header>
+      <ListCardHeader list={list} />
       <Card.Body>
         {/* Cards Mapping */}
         <Flex flexDirection={"column"} gap={5}>
           {cards.map((card, index) => (
-            <CardComponent card={card} key={index} />
+            <CardComponent card={card} key={index} deleteCard={deleteCard} />
           ))}
         </Flex>
 
@@ -119,5 +149,86 @@ export default function ListCard({ list }) {
         )}
       </Card.Body>
     </Card.Root>
+  );
+}
+
+export function ListCardHeader({ list }) {
+  const { name } = list;
+  const [openCardsDialog, setOpenCardsDialog] = useState(false);
+  return (
+    <Card.Header>
+      <Card.Title position={"relative"}>
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          gap={2}
+        >
+          <Text>{name}</Text>
+          <BsThreeDots
+            size={20}
+            cursor={"pointer"}
+            onClick={() => setOpenCardsDialog((prev) => !prev)}
+          />
+        </Box>
+        {openCardsDialog ? (
+          <Card.Root
+            width="320px"
+            position={"absolute"}
+            zIndex={10}
+            left={"12rem"}
+          >
+            <Card.Body>
+              <Center>List actions</Center>
+              <Stack gap="2" pt={4}>
+                <Text
+                  fontSize={"sm"}
+                  cursor={"pointer"}
+                  borderRadius={"md"}
+                  padding={"5px"}
+                  _hover={{ backgroundColor: "gray.200" }}
+                  display={"flex"}
+                  justifyContent={"flex-start"}
+                  alignItems={"center"}
+                  gap={2}
+                >
+                  <CgPlayListAdd size={20} />
+                  Add a card
+                </Text>
+                <Separator />
+                <Text
+                  fontSize={"sm"}
+                  cursor={"pointer"}
+                  borderRadius={"md"}
+                  padding={"5px"}
+                  _hover={{ backgroundColor: "gray.200" }}
+                  display={"flex"}
+                  justifyContent={"flex-start"}
+                  alignItems={"center"}
+                  gap={2}
+                >
+                  <MdArchive size={20} />
+                  Archive this list
+                </Text>
+                <Text
+                  fontSize={"sm"}
+                  cursor={"pointer"}
+                  borderRadius={"md"}
+                  padding={"5px"}
+                  _hover={{ backgroundColor: "gray.200" }}
+                  display={"flex"}
+                  justifyContent={"flex-start"}
+                  alignItems={"center"}
+                  gap={2}
+                >
+                  <IoArchive size={20} />
+                  Archive all cards in this list
+                </Text>
+              </Stack>
+            </Card.Body>
+          </Card.Root>
+        ) : null}
+      </Card.Title>
+    </Card.Header>
   );
 }

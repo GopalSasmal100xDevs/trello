@@ -3,8 +3,13 @@ import { IoMdCheckboxOutline } from "react-icons/io";
 import { Button } from "../ui/button";
 import TodoProgressBar from "./TodoProgressBar";
 import Todo from "./Todo";
+import { MdDelete } from "react-icons/md";
 
-export default function TodoList({ card, setReloadChecklist }) {
+export default function TodoList({
+  card,
+  setReloadChecklist,
+  deleteItemOnCheckList,
+}) {
   const { id, name, checkItems } = card;
 
   return (
@@ -27,6 +32,7 @@ export default function TodoList({ card, setReloadChecklist }) {
         checkItems={checkItems}
         id={id}
         setReloadChecklist={setReloadChecklist}
+        deleteItemOnCheckList={deleteItemOnCheckList}
       />
     </Flex>
   );

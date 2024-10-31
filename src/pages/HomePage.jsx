@@ -17,7 +17,6 @@ export default function HomePage() {
   const sortBy = createListCollection(SORT_BY_OPTIONS);
 
   function createBoard(title, color) {
-    encodeURIComponent;
     const url = `${
       import.meta.env.VITE_BOARD_BASE_URL
     }/?name=${encodeURIComponent(title)}&prefs_background=${color}&key=${
