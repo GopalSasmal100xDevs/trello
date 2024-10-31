@@ -55,12 +55,12 @@ export default function HomePage() {
       try {
         const response = await getData(url);
         setBoards(response.data);
-        setLoading(false);
       } catch (_error) {
         toaster.create({
           description: "Failed to load boards!",
           type: "error",
         });
+      } finally {
         setLoading(false);
       }
     };

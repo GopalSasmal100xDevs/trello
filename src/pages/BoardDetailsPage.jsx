@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { getData, postData } from "../utils";
 import { toaster } from "../components/ui/toaster";
-import { Box, Flex, Skeleton } from "@chakra-ui/react";
+import { Box, Skeleton } from "@chakra-ui/react";
 import Navbar from "../components/board-details/Navbar";
 import ListCard from "../components/board-details/ListCard";
 import CreateListCard from "../components/board-details/CreateListCard";
@@ -18,13 +18,15 @@ export default function BoardDetailsPage() {
   const [listName, setListName] = useState("");
 
   function createListOnBoard() {
+    if (listName.trim().length == 0) return;
+
     const url = `${
       import.meta.env.VITE_BOARD_BASE_URL
     }/${id}/lists?name=${listName}&key=${
       import.meta.env.VITE_TRELLO_API_KEY
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
 
-    const promise = postData(url).then((response) => {
+    const promise = postData(url).then(() => {
       setListName("");
       setActiveAddCard(false);
     });
@@ -90,7 +92,7 @@ export default function BoardDetailsPage() {
   }, [id, fetchBoardDetails, fetchBoardLists]);
 
   return (
-    <Box height={"full"}>
+    <Box position={"absolute"} overflow={"hidden"}>
       <Navbar board={board} loading={loading} />
       {listsLoading ? (
         <Box display={"flex"} flexDirection={"row"} gap={10} mt={8} ml={20}>
@@ -99,13 +101,17 @@ export default function BoardDetailsPage() {
           ))}
         </Box>
       ) : (
-        <Flex
+        <Box
+          display={"flex"}
+          flexDirection={"row"}
           height={"full"}
           width={"100%"}
-          flexDirection={"row"}
-          gap={10}
+          gap={4}
           pt={8}
           pl={20}
+          position={"relative"}
+          mt={"12px"}
+          flexGrow={1}
         >
           {boardLists.map((list, index) => (
             <ListCard key={index} list={list} />
@@ -118,7 +124,7 @@ export default function BoardDetailsPage() {
             activeAddCard={activeAddCard}
             createListOnBoard={createListOnBoard}
           />
-        </Flex>
+        </Box>
       )}
     </Box>
   );

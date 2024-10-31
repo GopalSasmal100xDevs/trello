@@ -1,4 +1,4 @@
-import { Box, Button, Skeleton, Text } from "@chakra-ui/react";
+import { Box, Skeleton, Text } from "@chakra-ui/react";
 import { BiStar } from "react-icons/bi";
 
 export default function Navbar({ board: { name }, loading }) {
