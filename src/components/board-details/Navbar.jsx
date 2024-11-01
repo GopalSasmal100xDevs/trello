@@ -3,7 +3,7 @@ import { BiStar } from "react-icons/bi";
 
 export default function Navbar({ board: { name }, loading }) {
   return (
-    <Box bgColor="#0000003d">
+    <Box bgColor="#0000003d" px={20}>
       {loading ? (
         <Skeleton flex="1" height="10" variant="pulse" />
       ) : (
@@ -11,7 +11,7 @@ export default function Navbar({ board: { name }, loading }) {
           display={"inline-block"}
           position={"relative"}
           flexDirection={"row"}
-          padding={"12px 10px 12px 16px"}
+          padding={"12px 0px"}
           flexGrow={1}
           flexWrap={"wrap"}
           alignItems={"center"}

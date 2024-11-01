@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getData, postData, putData } from "../utils";
 import { toaster } from "../components/ui/toaster";
-import { Box, Skeleton } from "@chakra-ui/react";
+import { Box, Grid, HStack, Skeleton } from "@chakra-ui/react";
 import Navbar from "../components/board-details/Navbar";
 import ListCard from "../components/board-details/ListCard";
 import CreateListCard from "../components/board-details/CreateListCard";
@@ -130,30 +130,28 @@ export default function BoardDetailsPage() {
           ))}
         </Box>
       ) : (
-        <Box
-          display={"flex"}
-          height={"screen"}
-          width={"auto"}
-          gap={4}
-          pt={8}
+        <Grid
+          h={"85vh"}
+          alignItems={"flex-start"}
+          overflow={"auto"}
           pl={20}
-          position={"relative"}
-          mt={"12px"}
-          flexGrow={1}
-          overflowy={"auto"}
+          pt={10}
+          pr={10}
         >
-          {boardLists.map((list, index) => (
-            <ListCard key={index} list={list} archiveList={archiveList} />
-          ))}
+          <HStack alignItems={"flex-start"} gap={4}>
+            {boardLists.map((list, index) => (
+              <ListCard key={index} list={list} archiveList={archiveList} />
+            ))}
 
-          <CreateListCard
-            listName={listName}
-            setListName={setListName}
-            setActiveAddCard={setActiveAddCard}
-            activeAddCard={activeAddCard}
-            createListOnBoard={createListOnBoard}
-          />
-        </Box>
+            <CreateListCard
+              listName={listName}
+              setListName={setListName}
+              setActiveAddCard={setActiveAddCard}
+              activeAddCard={activeAddCard}
+              createListOnBoard={createListOnBoard}
+            />
+          </HStack>
+        </Grid>
       )}
     </Box>
   );

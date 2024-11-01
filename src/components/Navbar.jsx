@@ -11,7 +11,7 @@ export default function Navbar() {
       w="100%"
       h="90px"
       bgGradient="linear(to-b, orange.100, purple.300)"
-      px={12}
+      px={20}
     >
       <Button as={Link} to={"/"}>
         Boards
