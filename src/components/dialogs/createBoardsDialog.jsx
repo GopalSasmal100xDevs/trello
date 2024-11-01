@@ -21,7 +21,7 @@ export default function CreateBoardsDialog({ createBoard }) {
   return (
     <DialogRoot initialFocusEl={() => ref.current} placement={"center"}>
       <DialogTrigger asChild>
-        <Card.Root width="410px">
+        <Card.Root width="300px" cursor={"pointer"} variant={"subtle"}>
           <Card.Body>
             <HStack mb="6" gap="3">
               <Stack gap="0">

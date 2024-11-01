@@ -1,4 +1,5 @@
 import { Box, Skeleton, Text } from "@chakra-ui/react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { BiStar } from "react-icons/bi";
 
 export default function Navbar({ board: { name }, loading }) {
@@ -19,6 +20,13 @@ export default function Navbar({ board: { name }, loading }) {
           height={"auto"}
           gap={4}
         >
+          {/* Dyanmic title */}
+          <HelmetProvider>
+            <Helmet>
+              <title>{name} | Trello</title>
+            </Helmet>
+          </HelmetProvider>
+
           <Box
             display={"flex"}
             alignItems={"center"}

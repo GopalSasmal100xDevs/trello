@@ -10,12 +10,12 @@ export default function HomeBoards({
 }) {
   return loading ? (
     <Flex gapX={6} gapY={6} flexWrap={"wrap"} alignItems={"center"} mt={8}>
-      {[1, 2, 3, 4].map((_, index) => (
-        <Skeleton key={index} width="410px" height="100px" />
+      {[1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => (
+        <Skeleton key={index} width="300px" height="100px" />
       ))}
     </Flex>
   ) : (
-    <Flex gapX={6} gapY={6} flexWrap={"wrap"} mt={8}>
+    <Flex gapX={5} gapY={5} flexWrap={"wrap"} mt={8}>
       {/* Modals for creating new board */}
       <CreateBoardsDialog cursor={"pointer"} createBoard={createBoard} />
 

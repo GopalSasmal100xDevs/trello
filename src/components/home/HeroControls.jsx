@@ -10,11 +10,13 @@ import {
   SelectValueText,
 } from "@chakra-ui/react";
 import { Field } from "../ui/field";
+import { InputGroup } from "../ui/input-group";
+import { IoSearchSharp } from "react-icons/io5";
 
 export default function HeroControls({
   sortBy,
-  sortCriteria,
   setSortCriteria,
+  setSearchString,
 }) {
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -31,7 +33,11 @@ export default function HeroControls({
           </SelectTrigger>
           <SelectContent position={"absolute"} top={16}>
             {sortBy.items.map(({ value, label }) => (
-              <SelectItem item={value} key={value}>
+              <SelectItem
+                item={value}
+                key={value}
+                onClick={() => setSortCriteria(value)}
+              >
                 {label}
               </SelectItem>
             ))}
@@ -39,12 +45,14 @@ export default function HeroControls({
         </SelectRoot>
       </Box>
 
-      <Box width={300} display={"inline"}>
+      <Box width={300} display={"inline"} mr={"-8px"}>
         <Field label="Search">
-          {/* <InputLeftElement pointerEvents="none">
-            <BiSearch color="gray.300" />
-          </InputLeftElement> */}
-          <Input placeholder="Search Boards" />
+          <InputGroup flex="1" startElement={<IoSearchSharp />}>
+            <Input
+              placeholder="Search Boards"
+              onChange={(e) => setSearchString(e.target.value)}
+            />
+          </InputGroup>
         </Field>
       </Box>
     </Flex>

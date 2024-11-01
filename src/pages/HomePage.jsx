@@ -4,14 +4,21 @@ import { BsClockHistory } from "react-icons/bs";
 import HomeControls from "../components/home/HeroControls";
 import HomeBoards from "../components/home/HomeBoards";
 import { SORT_BY_OPTIONS } from "../constants";
-import { getData, postData } from "../utils";
+import {
+  getData,
+  getSearchedBoards,
+  getSortedBoards,
+  postData,
+} from "../utils";
 import { toaster } from "../components/ui/toaster";
 import { useNavigate } from "react-router-dom";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 export default function HomePage() {
   const [sortCriteria, setSortCriteria] = useState("");
   const [boards, setBoards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchString, setSearchString] = useState("");
   const navigate = useNavigate();
 
   const sortBy = createListCollection(SORT_BY_OPTIONS);
@@ -45,6 +52,9 @@ export default function HomePage() {
     navigate(`/boards/${board.id}`);
   }
 
+  const sortedBoards = getSortedBoards([...boards], sortCriteria);
+  const searchedBoards = getSearchedBoards([...sortedBoards], searchString);
+
   useEffect(() => {
     const fetchData = async () => {
       const url = `${import.meta.env.VITE_ALL_BOARDS_BASE_URL}/?key=${
@@ -74,8 +84,15 @@ export default function HomePage() {
       width={"8/12"}
       margin={"0 auto"}
     >
+      {/* Dyanmic title */}
+      <HelmetProvider>
+        <Helmet>
+          <title>Boards | Trello</title>
+        </Helmet>
+      </HelmetProvider>
+
       <Heading size="4xl" my={8}>
-        Trello Boards
+        Boards
       </Heading>
 
       <Heading
@@ -97,13 +114,13 @@ export default function HomePage() {
 
       <HomeControls
         sortBy={sortBy}
-        sortCriteria={sortCriteria}
         setSortCriteria={setSortCriteria}
+        setSearchString={setSearchString}
       />
 
       <HomeBoards
         createBoard={createBoard}
-        boards={boards}
+        boards={searchedBoards}
         handleBoardClick={handleBoardClick}
         loading={loading}
       />

@@ -2,7 +2,7 @@ import { Card, HStack, Stack, Text } from "@chakra-ui/react";
 
 export default function Board({ board: { name } }) {
   return (
-    <Card.Root width="410px">
+    <Card.Root width="300px">
       <Card.Body>
         <HStack mb="6" gap="3">
           <Stack gap="0">

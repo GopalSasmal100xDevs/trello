@@ -128,30 +128,6 @@ export default function ListCard({ list, archiveList }) {
     });
   }
 
-  // function archiveList() {
-  //   const url = `${
-  //     import.meta.env.VITE_LIST_DETAILS_BASE_URL
-  //   }/${id}/closed?value=true&key=${
-  //     import.meta.env.VITE_TRELLO_API_KEY
-  //   }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
-
-  //   const promise = putData(url).then(() => {
-  //     setActiveAddCard((prev) => !prev);
-  //   });
-
-  //   toaster.promise(promise, {
-  //     success: {
-  //       title: "Your list has been archived successfully!",
-  //       description: "Looks great",
-  //     },
-  //     error: {
-  //       title: "Failed to archive list!",
-  //       description: "Something wrong with the archive",
-  //     },
-  //     loading: { title: "Archiving list...", description: "Please wait" },
-  //   });
-  // }
-
   function keyEventHandler(e) {
     if (e.key === "Enter") {
       addCardInList();
