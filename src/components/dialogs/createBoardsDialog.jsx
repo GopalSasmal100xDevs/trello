@@ -18,6 +18,13 @@ export default function CreateBoardsDialog({ createBoard }) {
   const ref = useRef(null);
   const [boardTitle, setBoardTitle] = useState("");
   const [selectBoardColor, setSelectBoardColor] = useState(BOARD_COLORS[0]);
+
+  function handleKeyEvent(e) {
+    if (e.key === "Enter") {
+      createBoard(boardTitle.trim(), selectBoardColor);
+    }
+  }
+
   return (
     <DialogRoot initialFocusEl={() => ref.current} placement={"center"}>
       <DialogTrigger asChild>
@@ -69,6 +76,7 @@ export default function CreateBoardsDialog({ createBoard }) {
                 required={true}
                 value={boardTitle}
                 onChange={(e) => setBoardTitle(e.target.value)}
+                onKeyDown={handleKeyEvent}
               />
             </Field>
           </Stack>
@@ -77,7 +85,9 @@ export default function CreateBoardsDialog({ createBoard }) {
           <DialogActionTrigger asChild>
             <Button variant="outline">Cancel</Button>
           </DialogActionTrigger>
-          <Button onClick={() => createBoard(boardTitle, selectBoardColor)}>
+          <Button
+            onClick={() => createBoard(boardTitle.trim(), selectBoardColor)}
+          >
             + Create Board
           </Button>
         </DialogFooter>

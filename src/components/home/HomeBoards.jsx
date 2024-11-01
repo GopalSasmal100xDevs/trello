@@ -17,7 +17,10 @@ export default function HomeBoards({
   ) : (
     <Flex gapX={5} gapY={5} flexWrap={"wrap"} mt={8}>
       {/* Modals for creating new board */}
-      <CreateBoardsDialog cursor={"pointer"} createBoard={createBoard} />
+      {/* Because free accounts can only create 10 boards */}
+      {boards.length < 10 ? (
+        <CreateBoardsDialog cursor={"pointer"} createBoard={createBoard} />
+      ) : null}
 
       {/* All Boards */}
       {boards.map((board) => (

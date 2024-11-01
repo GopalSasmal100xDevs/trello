@@ -24,6 +24,7 @@ export default function ListCard({ list, archiveList }) {
   const [activeAddCard, setActiveAddCard] = useState(false);
   const [cardTitle, setCardTitle] = useState("");
   const [cards, setCards] = useState([]);
+  const [reloadListCards, setReloadListCards] = useState(false);
 
   const fetchCardLists = useCallback(
     async (listId) => {
@@ -38,7 +39,7 @@ export default function ListCard({ list, archiveList }) {
         setCards(response.data);
       } catch (_err) {}
     },
-    [id, activeAddCard]
+    [id, reloadListCards, activeAddCard]
   );
 
   function addCardInList() {
@@ -52,7 +53,7 @@ export default function ListCard({ list, archiveList }) {
 
     try {
       const promise = postData(url).then(() => {
-        setActiveAddCard(false);
+        setReloadListCards((prev) => !prev);
         setCardTitle("");
       });
       toaster.promise(promise, {
@@ -83,7 +84,7 @@ export default function ListCard({ list, archiveList }) {
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
 
     const promise = deleteData(url).then(() => {
-      setActiveAddCard((prev) => !prev);
+      setReloadListCards((prev) => !prev);
     });
 
     toaster.promise(promise, {
@@ -112,7 +113,7 @@ export default function ListCard({ list, archiveList }) {
     }`;
 
     const promise = postData(url).then(() => {
-      setActiveAddCard((prev) => !prev);
+      setReloadListCards((prev) => !prev);
     });
 
     toaster.promise(promise, {
@@ -138,7 +139,7 @@ export default function ListCard({ list, archiveList }) {
 
   useEffect(() => {
     fetchCardLists(id);
-  }, [id, fetchCardLists, activeAddCard]);
+  }, [id, fetchCardLists, reloadListCards, activeAddCard]);
 
   return (
     <Card.Root width={"285px"} maxW="sm">

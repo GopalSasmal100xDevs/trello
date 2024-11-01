@@ -1,7 +1,12 @@
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getData, postData, putData } from "../utils";
+import {
+  getData,
+  postData,
+  putData,
+  removeBoardFromRecentViewedBoards,
+} from "../utils";
 import { toaster } from "../components/ui/toaster";
 import { Box, Grid, HStack, Skeleton } from "@chakra-ui/react";
 import Navbar from "../components/board-details/Navbar";
@@ -17,6 +22,7 @@ export default function BoardDetailsPage() {
   const [board, setBoard] = useState({});
   const [activeAddCard, setActiveAddCard] = useState(false);
   const [listName, setListName] = useState("");
+  const [reloadDetailsPage, setReloadDetailsPage] = useState(false);
 
   function createListOnBoard() {
     if (listName.trim().length == 0) return;
@@ -29,7 +35,7 @@ export default function BoardDetailsPage() {
 
     const promise = postData(url).then(() => {
       setListName("");
-      setActiveAddCard(false);
+      setReloadDetailsPage((prev) => !prev);
     });
 
     toaster.promise(promise, {
@@ -62,6 +68,7 @@ export default function BoardDetailsPage() {
           description: "Failed to load board details!",
           type: "error",
         });
+        removeBoardFromRecentViewedBoards(id);
         navigate("/error");
       } finally {
         setLoading(false);
@@ -88,7 +95,7 @@ export default function BoardDetailsPage() {
         setListLoading(false);
       }
     },
-    [id, activeAddCard]
+    [id, reloadDetailsPage]
   );
 
   function archiveList(id) {
@@ -99,7 +106,8 @@ export default function BoardDetailsPage() {
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
 
     const promise = putData(url).then(() => {
-      setActiveAddCard((prev) => !prev);
+      setReloadDetailsPage((prev) => !prev);
+      setActiveAddCard(true);
     });
 
     toaster.promise(promise, {
@@ -117,8 +125,11 @@ export default function BoardDetailsPage() {
 
   useEffect(() => {
     fetchBoardDetails(id);
+  }, [id, fetchBoardDetails]);
+
+  useEffect(() => {
     fetchBoardLists(id);
-  }, [id, fetchBoardDetails, fetchBoardLists]);
+  }, [id, fetchBoardLists, reloadDetailsPage]);
 
   return (
     <Box position={"absolute"} width={"full"}>

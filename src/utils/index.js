@@ -25,6 +25,12 @@ export function getSearchedBoards(boards = [], searchString = "") {
   );
 }
 
+export function removeBoardFromRecentViewedBoards(id) {
+  const boards = JSON.parse(localStorage.getItem("recentViewedBoards")) || [];
+  const newBoards = boards.filter((board) => board.id !== id);
+  localStorage.setItem("recentViewedBoards", JSON.stringify(newBoards));
+}
+
 export function postData(url) {
   return axios.post(url);
 }
