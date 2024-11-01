@@ -17,3 +17,7 @@ export function getData(url) {
 export function deleteData(url) {
   return axios.delete(url);
 }
+
+export function putData(url) {
+  return axios.put(url);
+}

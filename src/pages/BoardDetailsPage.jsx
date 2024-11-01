@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { getData, postData } from "../utils";
+import { getData, postData, putData } from "../utils";
 import { toaster } from "../components/ui/toaster";
 import { Box, Skeleton } from "@chakra-ui/react";
 import Navbar from "../components/board-details/Navbar";
@@ -40,7 +40,10 @@ export default function BoardDetailsPage() {
         title: "Failed to create list!",
         description: "Something wrong with the creation",
       },
-      loading: { title: "Creating...", description: "Please wait" },
+      loading: {
+        title: "Creating list on board...",
+        description: "Please wait",
+      },
     });
   }
 
@@ -86,6 +89,30 @@ export default function BoardDetailsPage() {
     [id, activeAddCard]
   );
 
+  function archiveList(id) {
+    const url = `${
+      import.meta.env.VITE_LIST_DETAILS_BASE_URL
+    }/${id}/closed?value=true&key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+    const promise = putData(url).then(() => {
+      setActiveAddCard((prev) => !prev);
+    });
+
+    toaster.promise(promise, {
+      success: {
+        title: "Your list has been archived successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to archive list!",
+        description: "Something wrong with the archive",
+      },
+      loading: { title: "Archiving list...", description: "Please wait" },
+    });
+  }
+
   useEffect(() => {
     fetchBoardDetails(id);
     fetchBoardLists(id);
@@ -103,7 +130,6 @@ export default function BoardDetailsPage() {
       ) : (
         <Box
           display={"flex"}
-          flexDirection={"row"}
           height={"screen"}
           width={"auto"}
           gap={4}
@@ -115,7 +141,7 @@ export default function BoardDetailsPage() {
           overflowy={"auto"}
         >
           {boardLists.map((list, index) => (
-            <ListCard key={index} list={list} />
+            <ListCard key={index} list={list} archiveList={archiveList} />
           ))}
 
           <CreateListCard

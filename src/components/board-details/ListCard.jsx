@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
-import { deleteData, getData, postData } from "../../utils";
+import { deleteData, getData, postData, putData } from "../../utils";
 import CardComponent from "./Card";
 import { toaster } from "../ui/toaster";
 import { Button } from "../ui/button";
@@ -19,7 +19,7 @@ import { MdArchive } from "react-icons/md";
 import { IoArchive } from "react-icons/io5";
 import { CgPlayListAdd } from "react-icons/cg";
 
-export default function ListCard({ list }) {
+export default function ListCard({ list, archiveList }) {
   const { id } = list;
   const [activeAddCard, setActiveAddCard] = useState(false);
   const [cardTitle, setCardTitle] = useState("");
@@ -41,7 +41,7 @@ export default function ListCard({ list }) {
     [id, activeAddCard]
   );
 
-  async function addCardInList() {
+  function addCardInList() {
     if (cardTitle.trim().length == 0) return;
 
     const url = `${
@@ -64,7 +64,10 @@ export default function ListCard({ list }) {
           title: "Failed to add card!",
           description: "Something wrong with the creation",
         },
-        loading: { title: "Adding...", description: "Please wait" },
+        loading: {
+          title: "Adding card in list...",
+          description: "Please wait",
+        },
       });
     } catch (_error) {
       toaster.create({
@@ -73,7 +76,8 @@ export default function ListCard({ list }) {
       });
     }
   }
-  async function deleteCard(id) {
+
+  function deleteCard(id) {
     const url = `${import.meta.env.VITE_CARD_DETAILS_BASE_URL}/${id}?key=${
       import.meta.env.VITE_TRELLO_API_KEY
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
@@ -81,6 +85,7 @@ export default function ListCard({ list }) {
     const promise = deleteData(url).then(() => {
       setActiveAddCard((prev) => !prev);
     });
+
     toaster.promise(promise, {
       success: {
         title: "Your board has been deleted successfully!",
@@ -90,9 +95,62 @@ export default function ListCard({ list }) {
         title: "Failed to delete board!",
         description: "Something wrong with the creation",
       },
-      loading: { title: "Creating...", description: "Please wait" },
+      loading: { title: "Deleting card...", description: "Please wait" },
     });
   }
+
+  function deleteAllCardsInList() {
+    if (cards.length === 0) {
+      setActiveAddCard((prev) => !prev);
+      return;
+    }
+
+    const url = `${
+      import.meta.env.VITE_LIST_DETAILS_BASE_URL
+    }/${id}/archiveAllCards?key=${import.meta.env.VITE_TRELLO_API_KEY}&token=${
+      import.meta.env.VITE_TRELLO_TOKEN
+    }`;
+
+    const promise = postData(url).then(() => {
+      setActiveAddCard((prev) => !prev);
+    });
+
+    toaster.promise(promise, {
+      success: {
+        title: "Your all cards have been archived successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to archive all cards!",
+        description: "Something wrong with the archive",
+      },
+      loading: { title: "Archiving all cards...", description: "Please wait" },
+    });
+  }
+
+  // function archiveList() {
+  //   const url = `${
+  //     import.meta.env.VITE_LIST_DETAILS_BASE_URL
+  //   }/${id}/closed?value=true&key=${
+  //     import.meta.env.VITE_TRELLO_API_KEY
+  //   }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+  //   const promise = putData(url).then(() => {
+  //     setActiveAddCard((prev) => !prev);
+  //   });
+
+  //   toaster.promise(promise, {
+  //     success: {
+  //       title: "Your list has been archived successfully!",
+  //       description: "Looks great",
+  //     },
+  //     error: {
+  //       title: "Failed to archive list!",
+  //       description: "Something wrong with the archive",
+  //     },
+  //     loading: { title: "Archiving list...", description: "Please wait" },
+  //   });
+  // }
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
@@ -108,7 +166,12 @@ export default function ListCard({ list }) {
 
   return (
     <Card.Root width={"285px"} maxW="sm">
-      <ListCardHeader list={list} />
+      <ListCardHeader
+        list={list}
+        setActiveAddCard={setActiveAddCard}
+        deleteAllCardsInList={deleteAllCardsInList}
+        archiveList={archiveList}
+      />
       <Card.Body>
         {/* Cards Mapping */}
         <Flex flexDirection={"column"} gap={5}>
@@ -152,8 +215,13 @@ export default function ListCard({ list }) {
   );
 }
 
-export function ListCardHeader({ list }) {
-  const { name } = list;
+export function ListCardHeader({
+  list,
+  setActiveAddCard,
+  deleteAllCardsInList,
+  archiveList,
+}) {
+  const { id, name } = list;
   const [openCardsDialog, setOpenCardsDialog] = useState(false);
   return (
     <Card.Header>
@@ -186,11 +254,18 @@ export function ListCardHeader({ list }) {
                   cursor={"pointer"}
                   borderRadius={"md"}
                   padding={"5px"}
-                  _hover={{ backgroundColor: "gray.200" }}
+                  _hover={{
+                    backgroundColor: "gray.200",
+                    color: "black",
+                  }}
                   display={"flex"}
                   justifyContent={"flex-start"}
                   alignItems={"center"}
                   gap={2}
+                  onClick={() => {
+                    setActiveAddCard(true);
+                    setOpenCardsDialog(false);
+                  }}
                 >
                   <CgPlayListAdd size={20} />
                   Add a card
@@ -201,11 +276,15 @@ export function ListCardHeader({ list }) {
                   cursor={"pointer"}
                   borderRadius={"md"}
                   padding={"5px"}
-                  _hover={{ backgroundColor: "gray.200" }}
+                  _hover={{ backgroundColor: "gray.200", color: "black" }}
                   display={"flex"}
                   justifyContent={"flex-start"}
                   alignItems={"center"}
                   gap={2}
+                  onClick={() => {
+                    setOpenCardsDialog(false);
+                    archiveList(id);
+                  }}
                 >
                   <MdArchive size={20} />
                   Archive this list
@@ -215,11 +294,15 @@ export function ListCardHeader({ list }) {
                   cursor={"pointer"}
                   borderRadius={"md"}
                   padding={"5px"}
-                  _hover={{ backgroundColor: "gray.200" }}
+                  _hover={{ backgroundColor: "gray.200", color: "black" }}
                   display={"flex"}
                   justifyContent={"flex-start"}
                   alignItems={"center"}
                   gap={2}
+                  onClick={() => {
+                    setOpenCardsDialog(false);
+                    deleteAllCardsInList();
+                  }}
                 >
                   <IoArchive size={20} />
                   Archive all cards in this list

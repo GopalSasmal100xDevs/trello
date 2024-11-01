@@ -36,7 +36,7 @@ export default function HomePage() {
         title: "Failed to create board!",
         description: "Something wrong with the creation",
       },
-      loading: { title: "Creating...", description: "Please wait" },
+      loading: { title: "Creating board...", description: "Please wait" },
     });
   }
 

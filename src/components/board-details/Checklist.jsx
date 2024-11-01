@@ -55,7 +55,10 @@ export default function CheckList({ card }) {
         title: "Failed to create checklist!",
         description: "Something wrong with the creation",
       },
-      loading: { title: "Creating...", description: "Please wait" },
+      loading: {
+        title: "Adding items on checklist...",
+        description: "Please wait",
+      },
     });
   }
 
@@ -82,7 +85,7 @@ export default function CheckList({ card }) {
     [id, reloadChecklist]
   );
 
-  async function deleteItemOnCheckList(idCheckItem) {
+  function deleteItemOnCheckList(idCheckItem) {
     const url = `${
       import.meta.env.VITE_CARD_DETAILS_BASE_URL
     }/${id}/checkItem/${idCheckItem}?key=${
@@ -102,7 +105,32 @@ export default function CheckList({ card }) {
         title: "Failed to delete item on checklist!",
         description: "Something wrong with the creation",
       },
-      loading: { title: "Creating...", description: "Please wait" },
+      loading: {
+        title: "Deleting item form checklist...",
+        description: "Please wait",
+      },
+    });
+  }
+
+  function deleteChecklist(id) {
+    const url = `${import.meta.env.VITE_CHECKLISTS_BASE_URL}/${id}?key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+    const promise = deleteData(url).then(() => {
+      setReloadChecklist((prev) => !prev);
+    });
+
+    toaster.promise(promise, {
+      success: {
+        title: "Your checklist has been deleted successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to delete checklist!",
+        description: "Something wrong with the creation",
+      },
+      loading: { title: "Deleting checklist...", description: "Please wait" },
     });
   }
 
@@ -166,6 +194,7 @@ export default function CheckList({ card }) {
                 key={index}
                 setReloadChecklist={setReloadChecklist}
                 deleteItemOnCheckList={deleteItemOnCheckList}
+                deleteChecklist={deleteChecklist}
               />
             ))
           ) : (

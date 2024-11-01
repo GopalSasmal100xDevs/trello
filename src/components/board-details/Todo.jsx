@@ -4,7 +4,7 @@ import { useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { Button } from "../ui/button";
 import { AiTwotoneDelete } from "react-icons/ai";
-import { postData } from "../../utils";
+import { postData, putData } from "../../utils";
 import { toaster } from "../ui/toaster";
 
 export default function Todo({
@@ -12,6 +12,7 @@ export default function Todo({
   id,
   setReloadChecklist,
   deleteItemOnCheckList,
+  card,
 }) {
   const [openItemInput, setOpenItemInput] = useState(false);
   const [item, setItem] = useState("");
@@ -48,7 +49,39 @@ export default function Todo({
         title: "Failed to add items on checklist!",
         description: "Something wrong with the addition",
       },
-      loading: { title: "Creating...", description: "Please wait" },
+      loading: {
+        title: "Adding item on checklist...",
+        description: "Please wait",
+      },
+    });
+  }
+
+  function changeTodoStatus(isComplete, itemId) {
+    const url = `${import.meta.env.VITE_CARD_DETAILS_BASE_URL}/${
+      card.idCard
+    }/checkItem/${itemId}?state=${
+      isComplete === "incomplete" ? "complete" : "incomplete"
+    }&key=${import.meta.env.VITE_TRELLO_API_KEY}&token=${
+      import.meta.env.VITE_TRELLO_TOKEN
+    }`;
+
+    const promise = putData(url).then(() => {
+      setReloadChecklist((prev) => !prev);
+    });
+
+    toaster.promise(promise, {
+      success: {
+        title: "Your todo status has been changed successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to change todo status!",
+        description: "Something wrong with the addition",
+      },
+      loading: {
+        title: "Change todo status...",
+        description: "Please wait",
+      },
     });
   }
 
@@ -60,6 +93,7 @@ export default function Todo({
             key={index}
             item={item}
             deleteItemOnCheckList={deleteItemOnCheckList}
+            changeTodoStatus={changeTodoStatus}
           />
         ))}
       </Flex>
@@ -104,11 +138,11 @@ export default function Todo({
   );
 }
 
-export function TodoItem({ item, deleteItemOnCheckList }) {
-  const { id, name } = item;
+export function TodoItem({ item, deleteItemOnCheckList, changeTodoStatus }) {
+  const { id, name, state } = item;
 
-  const [checked, setChecked] = useState(false);
   const [openItemDel, setOpenItemDel] = useState(false);
+
   return (
     <Flex
       justifyContent={"space-between"}
@@ -120,12 +154,12 @@ export function TodoItem({ item, deleteItemOnCheckList }) {
         variant={"outline"}
         colorPalette={"cyan"}
         cursor={"pointer"}
-        value={checked}
-        onChange={(e) => setChecked(e.target.checked)}
+        checked={state === "complete"}
+        onChange={(e) => changeTodoStatus(state, id)}
         width={"full"}
       >
         <Text
-          textDecoration={checked ? "line-through" : "none"}
+          textDecoration={state === "complete" ? "line-through" : "none"}
           fontSize={"sm"}
         >
           {name}
