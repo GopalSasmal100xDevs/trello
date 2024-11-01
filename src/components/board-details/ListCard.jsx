@@ -2,6 +2,7 @@ import {
   Box,
   Card,
   Center,
+  Editable,
   Flex,
   Input,
   Separator,
@@ -148,12 +149,18 @@ export default function ListCard({ list, archiveList }) {
         setActiveAddCard={setActiveAddCard}
         deleteAllCardsInList={deleteAllCardsInList}
         archiveList={archiveList}
+        setReloadListCards={setReloadListCards}
       />
       <Card.Body>
         {/* Cards Mapping */}
         <Flex flexDirection={"column"} gap={5}>
           {cards.map((card, index) => (
-            <CardComponent card={card} key={index} deleteCard={deleteCard} />
+            <CardComponent
+              card={card}
+              key={index}
+              deleteCard={deleteCard}
+              setReloadListCards={setReloadListCards}
+            />
           ))}
         </Flex>
 
@@ -197,9 +204,44 @@ export function ListCardHeader({
   setActiveAddCard,
   deleteAllCardsInList,
   archiveList,
+  setReloadListCards,
 }) {
   const { id, name } = list;
   const [openCardsDialog, setOpenCardsDialog] = useState(false);
+  const [listName, setListName] = useState(name);
+
+  function keyEventHandler(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      updateName();
+    }
+  }
+
+  function updateName() {
+    if (listName.length === 0) return;
+
+    const url = `${import.meta.env.VITE_LIST_DETAILS_BASE_URL}/${id}?key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${listName}`;
+
+    const promise = putData(url).then(() => {
+      setListName("");
+      setReloadListCards((prev) => !prev);
+    });
+
+    toaster.promise(promise, {
+      success: {
+        title: "Your list name has been updated successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to update list name!",
+        description: "Something wrong with the updatation",
+      },
+      loading: { title: "Updating list name...", description: "Please wait" },
+    });
+  }
+
   return (
     <Card.Header>
       <Card.Title position={"relative"}>
@@ -209,7 +251,19 @@ export function ListCardHeader({
           alignItems={"center"}
           gap={2}
         >
-          <Text>{name}</Text>
+          <Editable.Root
+            onValueChange={(e) => setListName(e.value)}
+            value={listName}
+            placeholder={name}
+            width={"auto"}
+            fontWeight={"bold"}
+            fontSize={"18px"}
+            onKeyDown={keyEventHandler}
+          >
+            <Editable.Preview />
+            <Editable.Input />
+          </Editable.Root>
+
           <BsThreeDots
             size={20}
             cursor={"pointer"}

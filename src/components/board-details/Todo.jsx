@@ -33,7 +33,6 @@ export default function Todo({
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
 
     const promise = postData(url).then(() => {
-      setOpenItemInput(false);
       setItem("");
       setReloadChecklist((prev) => !prev);
     });

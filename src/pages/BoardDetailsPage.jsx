@@ -133,7 +133,11 @@ export default function BoardDetailsPage() {
 
   return (
     <Box position={"absolute"} width={"full"}>
-      <Navbar board={board} loading={loading} />
+      <Navbar
+        board={board}
+        loading={loading}
+        setReloadDetailsPage={setReloadDetailsPage}
+      />
       {listsLoading ? (
         <Box display={"flex"} flexDirection={"row"} gap={10} mt={8} ml={20}>
           {[1, 2, 3, 4].map((_, index) => (
