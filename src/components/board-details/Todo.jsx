@@ -1,11 +1,9 @@
-import { Box, Card, Flex, Input, Stack, Text } from "@chakra-ui/react";
-import { Checkbox } from "../ui/checkbox";
+import { Box, Flex, Input, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { Button } from "../ui/button";
-import { AiTwotoneDelete } from "react-icons/ai";
 import { postData, putData } from "../../utils";
 import { toaster } from "../ui/toaster";
+import TodoItem from "./TodoItem";
 
 export default function Todo({
   checkItems,
@@ -135,61 +133,5 @@ export default function Todo({
         )}
       </Box>
     </>
-  );
-}
-
-export function TodoItem({ item, deleteItemOnCheckList, changeTodoStatus }) {
-  const { id, name, state } = item;
-
-  const [openItemDel, setOpenItemDel] = useState(false);
-
-  return (
-    <Flex
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      width={"full"}
-      position={"relative"}
-    >
-      <Checkbox
-        variant={"outline"}
-        colorPalette={"cyan"}
-        cursor={"pointer"}
-        checked={state === "complete"}
-        onChange={(e) => changeTodoStatus(state, id)}
-        width={"full"}
-      >
-        <Text
-          textDecoration={state === "complete" ? "line-through" : "none"}
-          fontSize={"sm"}
-        >
-          {name}
-        </Text>
-      </Checkbox>
-      <HiOutlineDotsHorizontal
-        size={20}
-        cursor={"pointer"}
-        onClick={() => setOpenItemDel((prev) => !prev)}
-      />
-      {openItemDel ? (
-        <Card.Root
-          position={"absolute"}
-          zIndex={10}
-          maxW="sm"
-          right={0}
-          top={8}
-        >
-          <Card.Body>
-            <Button
-              variant={"surface"}
-              colorPalette={"red"}
-              onClick={() => deleteItemOnCheckList(id)}
-            >
-              <AiTwotoneDelete size={20} />
-              Delete
-            </Button>
-          </Card.Body>
-        </Card.Root>
-      ) : null}
-    </Flex>
   );
 }

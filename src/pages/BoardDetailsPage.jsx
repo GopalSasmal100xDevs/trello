@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getData, postData, putData } from "../utils";
 import { toaster } from "../components/ui/toaster";
 import { Box, Skeleton } from "@chakra-ui/react";
@@ -10,6 +10,7 @@ import CreateListCard from "../components/board-details/CreateListCard";
 
 export default function BoardDetailsPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [listsLoading, setListLoading] = useState(true);
   const [boardLists, setBoardLists] = useState([]);
@@ -61,6 +62,7 @@ export default function BoardDetailsPage() {
           description: "Failed to load board details!",
           type: "error",
         });
+        navigate("/error");
       } finally {
         setLoading(false);
       }
