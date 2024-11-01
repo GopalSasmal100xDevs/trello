@@ -145,7 +145,7 @@ export default function CheckList({ card }) {
         variant="surface"
         onClick={() => setOpenCheckListInput((prev) => !prev)}
       >
-        <IoMdCheckboxOutline />
+        <IoMdCheckboxOutline size={20} />
         Checklist
       </Button>
       {openCheckListInput ? (
