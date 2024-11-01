@@ -26,7 +26,7 @@ export default function HomeBoards({
           cursor={"pointer"}
           onClick={() => handleBoardClick(board)}
         >
-          <Board board={board} />
+          <Board name={board.name} />
         </Box>
       ))}
     </Flex>

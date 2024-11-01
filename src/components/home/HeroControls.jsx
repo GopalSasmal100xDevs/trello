@@ -19,7 +19,7 @@ export default function HeroControls({
   setSearchString,
 }) {
   return (
-    <Flex justifyContent={"space-between"} alignItems={"center"}>
+    <Flex justifyContent={"space-between"} alignItems={"center"} mt={8}>
       <Box>
         <SelectRoot
           collection={sortBy}
@@ -31,11 +31,12 @@ export default function HeroControls({
           <SelectTrigger>
             <SelectValueText placeholder={sortBy.items[0].label} />
           </SelectTrigger>
-          <SelectContent position={"absolute"} top={16}>
+          <SelectContent position={"absolute"} top={16} width="300px">
             {sortBy.items.map(({ value, label }) => (
               <SelectItem
                 item={value}
                 key={value}
+                cursor={"pointer"}
                 onClick={() => setSortCriteria(value)}
               >
                 {label}

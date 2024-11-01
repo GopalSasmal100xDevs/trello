@@ -1,6 +1,5 @@
-import { Box, createListCollection, Heading, Text } from "@chakra-ui/react";
+import { Box, createListCollection, Heading } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { BsClockHistory } from "react-icons/bs";
 import HomeControls from "../components/home/HeroControls";
 import HomeBoards from "../components/home/HomeBoards";
 import { SORT_BY_OPTIONS } from "../constants";
@@ -13,9 +12,11 @@ import {
 import { toaster } from "../components/ui/toaster";
 import { useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import RecentViewed from "../components/home/RecentViewed";
 
 export default function HomePage() {
   const [sortCriteria, setSortCriteria] = useState("");
+  const [recentViewedBoards, setRecentViewedBoards] = useState([]);
   const [boards, setBoards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchString, setSearchString] = useState("");
@@ -48,8 +49,26 @@ export default function HomePage() {
   }
 
   function handleBoardClick(board) {
-    // localstorage logic
+    let recentBoards =
+      JSON.parse(localStorage.getItem("recentViewedBoards")) || [];
+
+    recentBoards = recentBoards.filter(({ id }) => id !== board.id);
+
+    recentBoards = [{ id: board.id, name: board.name }, ...recentBoards];
+
+    if (recentBoards.length > 4) {
+      recentBoards = recentBoards.slice(0, 4);
+    }
+    localStorage.setItem("recentViewedBoards", JSON.stringify(recentBoards));
+    setRecentViewedBoards(recentBoards);
+
     navigate(`/boards/${board.id}`);
+  }
+
+  function getRecentViewedBoards() {
+    const recentBoards =
+      JSON.parse(localStorage.getItem("recentViewedBoards")) || [];
+    setRecentViewedBoards(recentBoards);
   }
 
   const sortedBoards = getSortedBoards([...boards], sortCriteria);
@@ -75,6 +94,7 @@ export default function HomePage() {
     };
 
     fetchData();
+    getRecentViewedBoards();
   }, []);
 
   return (
@@ -95,20 +115,11 @@ export default function HomePage() {
         Boards
       </Heading>
 
-      <Heading
-        size="md"
-        mt={8}
-        mb={4}
-        display={"flex"}
-        justifyContent={"flex-start"}
-        alignItems={"center"}
-        gap={"10px"}
-      >
-        <BsClockHistory width={12} />
-        <Text textTransform={"uppercase"}>Recently Viewed</Text>
-      </Heading>
-
       {/* Recently Viewed Boards */}
+      <RecentViewed
+        recentViewedBoards={recentViewedBoards}
+        setRecentViewedBoards={setRecentViewedBoards}
+      />
 
       {/* Home Controlls */}
 

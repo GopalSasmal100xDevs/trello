@@ -1,6 +1,6 @@
 import { Card, HStack, Stack, Text } from "@chakra-ui/react";
 
-export default function Board({ board: { name } }) {
+export default function Board({ name }) {
   return (
     <Card.Root width="300px">
       <Card.Body>
