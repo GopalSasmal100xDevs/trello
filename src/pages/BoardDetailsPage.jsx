@@ -1,6 +1,8 @@
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Box, Grid, HStack, Skeleton } from "@chakra-ui/react";
+
 import {
   getData,
   postData,
@@ -8,7 +10,6 @@ import {
   removeBoardFromRecentViewedBoards,
 } from "../utils";
 import { toaster } from "../components/ui/toaster";
-import { Box, Grid, HStack, Skeleton } from "@chakra-ui/react";
 import Navbar from "../components/board-details/Navbar";
 import ListCard from "../components/board-details/ListCard";
 import CreateListCard from "../components/board-details/CreateListCard";

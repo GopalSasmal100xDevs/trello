@@ -1,4 +1,8 @@
-import { Box, Card, Editable, Flex, Input, Text } from "@chakra-ui/react";
+import { Box, Card, Editable, Flex, Text } from "@chakra-ui/react";
+import { BsCardChecklist } from "react-icons/bs";
+import { IoArchive } from "react-icons/io5";
+import { useRef, useState } from "react";
+
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -9,11 +13,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { BsCardChecklist } from "react-icons/bs";
 import CheckList from "./Checklist";
 import { Button } from "../ui/button";
-import { IoArchive } from "react-icons/io5";
-import { useRef, useState } from "react";
 import { putData } from "../../utils";
 import { toaster } from "../ui/toaster";
 

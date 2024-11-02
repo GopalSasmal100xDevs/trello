@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { ProgressBar, ProgressRoot } from "../ui/progress";
 import { Text } from "@chakra-ui/react";
+
+import { ProgressBar, ProgressRoot } from "../ui/progress";
 
 export default function TodoProgressBar({ checkItems }) {
   const [progress, setProgress] = useState(0);

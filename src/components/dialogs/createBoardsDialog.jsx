@@ -1,4 +1,6 @@
+import { useRef, useState } from "react";
 import { Card, Flex, HStack, Input, Stack, Text } from "@chakra-ui/react";
+
 import { Button } from "../ui/button";
 import {
   DialogActionTrigger,
@@ -11,7 +13,6 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Field } from "../ui/field";
-import { useRef, useState } from "react";
 import { BOARD_COLORS } from "../../constants";
 
 export default function CreateBoardsDialog({ createBoard }) {

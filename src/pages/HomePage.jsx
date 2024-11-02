@@ -1,5 +1,8 @@
-import { Box, createListCollection, Heading } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { Box, createListCollection, Heading } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+
 import HomeControls from "../components/home/HeroControls";
 import HomeBoards from "../components/home/HomeBoards";
 import { SORT_BY_OPTIONS } from "../constants";
@@ -10,8 +13,6 @@ import {
   postData,
 } from "../utils";
 import { toaster } from "../components/ui/toaster";
-import { useNavigate } from "react-router-dom";
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import RecentViewed from "../components/home/RecentViewed";
 
 export default function HomePage() {
