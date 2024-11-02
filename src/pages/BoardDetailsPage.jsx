@@ -146,7 +146,7 @@ export default function BoardDetailsPage() {
         </Box>
       ) : (
         <Grid
-          h={"85vh"}
+          h={"calc(100vh - 150px)"}
           alignItems={"flex-start"}
           overflow={"auto"}
           pl={20}

@@ -19,6 +19,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { MdArchive } from "react-icons/md";
 import { IoArchive } from "react-icons/io5";
 import { CgPlayListAdd } from "react-icons/cg";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ListCard({ list, archiveList }) {
   const { id } = list;
@@ -26,6 +27,7 @@ export default function ListCard({ list, archiveList }) {
   const [cardTitle, setCardTitle] = useState("");
   const [cards, setCards] = useState([]);
   const [reloadListCards, setReloadListCards] = useState(false);
+  const [cardLoading, setCardLoading] = useState(true);
 
   const fetchCardLists = useCallback(
     async (listId) => {
@@ -38,7 +40,10 @@ export default function ListCard({ list, archiveList }) {
       try {
         const response = await getData(url);
         setCards(response.data);
-      } catch (_err) {}
+      } catch (_err) {
+      } finally {
+        setCardLoading(false);
+      }
     },
     [id, reloadListCards, activeAddCard]
   );
@@ -154,14 +159,16 @@ export default function ListCard({ list, archiveList }) {
       <Card.Body>
         {/* Cards Mapping */}
         <Flex flexDirection={"column"} gap={5}>
-          {cards.map((card, index) => (
-            <CardComponent
-              card={card}
-              key={index}
-              deleteCard={deleteCard}
-              setReloadListCards={setReloadListCards}
-            />
-          ))}
+          {cardLoading
+            ? [1, 2].map((_, index) => <Skeleton height="10" key={index} />)
+            : cards.map((card, index) => (
+                <CardComponent
+                  card={card}
+                  key={index}
+                  deleteCard={deleteCard}
+                  setReloadListCards={setReloadListCards}
+                />
+              ))}
         </Flex>
 
         {/* Button for Create new Card */}
@@ -219,10 +226,11 @@ export function ListCardHeader({
 
   function updateName() {
     if (listName.length === 0) return;
+    if (listName.trim() === name) return;
 
     const url = `${import.meta.env.VITE_LIST_DETAILS_BASE_URL}/${id}?key=${
       import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${listName}`;
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${listName.trim()}`;
 
     const promise = putData(url).then(() => {
       setListName("");
@@ -252,8 +260,6 @@ export function ListCardHeader({
           gap={2}
         >
           <Editable.Root
-            onValueChange={(e) => setListName(e.value)}
-            value={listName}
             placeholder={name}
             width={"auto"}
             fontWeight={"bold"}
@@ -261,8 +267,14 @@ export function ListCardHeader({
             onKeyDown={keyEventHandler}
           >
             <Editable.Preview />
-            <Editable.Input />
+            <Editable.Input
+              value={listName}
+              onChange={(e) => setListName(e.target.value)}
+            />
           </Editable.Root>
+          {/* <Text fontSize={"18px"} fontWeight={"bold"}>
+            {name}
+          </Text> */}
 
           <BsThreeDots
             size={20}

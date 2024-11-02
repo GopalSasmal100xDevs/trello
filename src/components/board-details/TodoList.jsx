@@ -25,10 +25,11 @@ export default function TodoList({
 
   function updateChecklistName() {
     if (checklistName.length === 0) return;
+    if (checklistName.trim() === name) return;
 
     const url = `${import.meta.env.VITE_CHECKLISTS_BASE_URL}/${id}?key=${
       import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${checklistName}`;
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${checklistName.trim()}`;
 
     const promise = putData(url).then(() => {
       setChecklistName("");
@@ -66,7 +67,9 @@ export default function TodoList({
             width={"auto"}
             fontSize={"14px"}
             onKeyDown={keyEventHandler}
-            border={"none"}
+            onClick={() => {
+              setChecklistName(name);
+            }}
           >
             <Editable.Preview />
             <Editable.Input />

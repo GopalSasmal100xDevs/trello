@@ -101,6 +101,7 @@ export default function Todo({
               placeholder="Add an item"
               size="md"
               autoFocus
+              value={item}
               onChange={(e) => setItem(e.target.value)}
               onKeyDown={keyEventHandler}
             />

@@ -14,14 +14,15 @@ export default function Navbar({
 
   function updateName() {
     if (updatedName.length === 0) return;
+    if (updatedName.trim() === name) return;
 
     const url = `${import.meta.env.VITE_BOARD_BASE_URL}/${id}?key=${
       import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${updatedName}`;
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${updatedName.trim()}`;
 
     const promise = putData(url).then(() => {
       setReloadDetailsPage((prev) => !prev);
-      setUpdatedName("");
+      // setUpdatedName("");
     });
 
     toaster.promise(promise, {
@@ -76,14 +77,18 @@ export default function Navbar({
           >
             <Editable.Root
               onValueChange={(e) => setUpdatedName(e.value)}
+              value={updatedName}
               placeholder={name}
               width={"auto"}
               fontWeight={"bold"}
-              fontSize={"18px"}
               onKeyDown={keyEventHandler}
+              fontSize={"18px"}
+              onClick={() => {
+                setUpdatedName(name);
+              }}
             >
               <Editable.Preview />
-              <Editable.Input value={updatedName} />
+              <Editable.Input />
             </Editable.Root>
 
             <BiStar size={20} cursor={"pointer"} />

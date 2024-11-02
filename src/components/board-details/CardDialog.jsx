@@ -13,13 +13,14 @@ import { BsCardChecklist } from "react-icons/bs";
 import CheckList from "./Checklist";
 import { Button } from "../ui/button";
 import { IoArchive } from "react-icons/io5";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { putData } from "../../utils";
 import { toaster } from "../ui/toaster";
 
 export default function CardDialog({ card, deleteCard, setReloadListCards }) {
   const { id, name } = card;
   const [cardName, setCardName] = useState(name);
+  const initRef = useRef(null);
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
@@ -30,10 +31,11 @@ export default function CardDialog({ card, deleteCard, setReloadListCards }) {
 
   function updateCardName() {
     if (cardName.length === 0) return;
+    if (cardName.trim() === name) return;
 
     const url = `${import.meta.env.VITE_CARD_DETAILS_BASE_URL}/${id}?key=${
       import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${cardName}`;
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${cardName.trim()}`;
 
     const promise = putData(url).then(() => {
       setCardName("");
@@ -53,7 +55,7 @@ export default function CardDialog({ card, deleteCard, setReloadListCards }) {
     });
   }
   return (
-    <DialogRoot lazyMount preventScroll size={"lg"}>
+    <DialogRoot lazyMount preventScroll size={"lg"} initialFocusEl={initRef}>
       <DialogTrigger asChild>
         <Card.Root variant={"subtle"} size={"sm"} cursor={"pointer"}>
           <Card.Body>
@@ -67,16 +69,17 @@ export default function CardDialog({ card, deleteCard, setReloadListCards }) {
             <Flex flexDirection={"row"} alignItems={"center"} gap={4}>
               <BsCardChecklist size={20} />
               <Editable.Root
-                onValueChange={(e) => setCardName(e.value)}
-                value={cardName}
                 placeholder={name}
-                width={"auto"}
+                width={"90%"}
                 fontSize={"14px"}
                 onKeyDown={keyEventHandler}
-                border={"none"}
               >
                 <Editable.Preview />
-                <Editable.Input />
+                <Editable.Input
+                  autoFocus={false}
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value)}
+                />
               </Editable.Root>
             </Flex>
           </DialogTitle>
