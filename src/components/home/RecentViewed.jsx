@@ -1,6 +1,7 @@
 import { Box, Flex, Grid, Heading, Text } from "@chakra-ui/react";
 import { BsClockHistory } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+
 import Board from "./Board";
 
 export default function RecentViewed({

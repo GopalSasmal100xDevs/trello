@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { Editable, Flex, Text } from "@chakra-ui/react";
 import { IoMdCheckboxOutline } from "react-icons/io";
+
 import { Button } from "../ui/button";
 import TodoProgressBar from "./TodoProgressBar";
 import Todo from "./Todo";
-import { useState } from "react";
 import { toaster } from "../ui/toaster";
 import { putData } from "../../utils";
 

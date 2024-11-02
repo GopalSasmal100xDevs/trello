@@ -4,6 +4,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+
 import HomePage from "./pages/HomePage";
 import MainLayout from "./layouts/MainLayout";
 import BoardDetailsPage from "./pages/BoardDetailsPage";

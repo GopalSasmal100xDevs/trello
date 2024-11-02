@@ -7,14 +7,15 @@ import {
   Skeleton,
   Stack,
 } from "@chakra-ui/react";
-import { Button } from "../ui/button";
 import { IoMdCheckboxOutline } from "react-icons/io";
-import { Field } from "../ui/field";
 import { useCallback, useEffect, useState } from "react";
+import { MdPlaylistRemove } from "react-icons/md";
+
+import { Button } from "../ui/button";
+import { Field } from "../ui/field";
 import { deleteData, getData, postData } from "../../utils";
 import { toaster } from "../ui/toaster";
 import TodoList from "./TodoList";
-import { MdPlaylistRemove } from "react-icons/md";
 
 export default function CheckList({ card }) {
   const { id } = card;

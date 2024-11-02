@@ -1,5 +1,6 @@
-import { Box, Flex, Input, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
+import { Box, Flex, Input, Stack } from "@chakra-ui/react";
+
 import { Button } from "../ui/button";
 import { postData, putData } from "../../utils";
 import { toaster } from "../ui/toaster";

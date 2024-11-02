@@ -1,3 +1,4 @@
+import { IoSearchSharp } from "react-icons/io5";
 import {
   Box,
   Flex,
@@ -9,9 +10,9 @@ import {
   SelectTrigger,
   SelectValueText,
 } from "@chakra-ui/react";
+
 import { Field } from "../ui/field";
 import { InputGroup } from "../ui/input-group";
-import { IoSearchSharp } from "react-icons/io5";
 
 export default function HeroControls({
   sortBy,

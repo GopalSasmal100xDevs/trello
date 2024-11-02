@@ -1,24 +1,24 @@
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Card,
   Center,
-  Editable,
   Flex,
   Input,
   Separator,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
-import { deleteData, getData, postData, putData } from "../../utils";
-import CardComponent from "./Card";
-import { toaster } from "../ui/toaster";
-import { Button } from "../ui/button";
 import { BsThreeDots } from "react-icons/bs";
 import { MdArchive } from "react-icons/md";
 import { IoArchive } from "react-icons/io5";
 import { CgPlayListAdd } from "react-icons/cg";
+
+import { deleteData, getData, postData, putData } from "../../utils";
+import CardComponent from "./Card";
+import { toaster } from "../ui/toaster";
+import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 
 export default function ListCard({ list, archiveList }) {

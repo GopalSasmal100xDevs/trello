@@ -1,4 +1,5 @@
 import { Box, Flex, Skeleton } from "@chakra-ui/react";
+
 import CreateBoardsDialog from "../dialogs/createBoardsDialog";
 import Board from "./Board";
 
