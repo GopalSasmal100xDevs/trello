@@ -20,7 +20,7 @@ function Routing() {
         <Route path="/" index element={<HomePage />} />
         <Route path="/boards/:id" element={<BoardDetailsPage />} />
         <Route path="/error" element={<ErrorPage />} />
-        <Route path="*" element={<h1>Not found</h1>} />
+        <Route path="*" element={<ErrorPage />} />
       </Route>
     )
   );
