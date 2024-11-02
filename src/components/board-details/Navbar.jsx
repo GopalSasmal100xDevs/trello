@@ -22,8 +22,8 @@ export default function Navbar({
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${updatedName.trim()}`;
 
     const promise = putData(url).then(() => {
+      setUpdatedName("");
       setReloadDetailsPage((prev) => !prev);
-      // setUpdatedName("");
     });
 
     toaster.promise(promise, {
@@ -77,16 +77,12 @@ export default function Navbar({
             gap={4}
           >
             <Editable.Root
-              onValueChange={(e) => setUpdatedName(e.value)}
-              value={updatedName}
-              placeholder={name}
+              defaultValue={name}
+              onKeyDown={keyEventHandler}
+              onChange={(e) => setUpdatedName(e.target.value)}
               width={"auto"}
               fontWeight={"bold"}
-              onKeyDown={keyEventHandler}
               fontSize={"18px"}
-              onClick={() => {
-                setUpdatedName(name);
-              }}
             >
               <Editable.Preview />
               <Editable.Input />

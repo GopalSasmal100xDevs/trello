@@ -3,6 +3,7 @@ import {
   Box,
   Card,
   Center,
+  Editable,
   Flex,
   Input,
   Separator,
@@ -259,22 +260,16 @@ export function ListCardHeader({
           alignItems={"center"}
           gap={2}
         >
-          {/* <Editable.Root
-            placeholder={name}
-            width={"auto"}
-            fontWeight={"bold"}
+          <Editable.Root
+            defaultValue={name}
             fontSize={"18px"}
+            fontWeight={"bold"}
+            onChange={(e) => setListName(e.target.value)}
             onKeyDown={keyEventHandler}
           >
             <Editable.Preview />
-            <Editable.Input
-              value={listName}
-              onChange={(e) => setListName(e.target.value)}
-            />
-          </Editable.Root> */}
-          <Text fontSize={"18px"} fontWeight={"bold"}>
-            {name}
-          </Text>
+            <Editable.Input />
+          </Editable.Root>
 
           <BsThreeDots
             size={20}

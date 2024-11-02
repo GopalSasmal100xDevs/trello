@@ -7,6 +7,17 @@ import TodoProgressBar from "./TodoProgressBar";
 import Todo from "./Todo";
 import { toaster } from "../ui/toaster";
 import { putData } from "../../utils";
+import {
+  DialogActionTrigger,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 
 export default function TodoList({
   card,
@@ -59,30 +70,21 @@ export default function TodoList({
           display={"flex"}
           gap={2}
           alignItems={"center"}
+          w={"80%"}
         >
           <IoMdCheckboxOutline size={20} />
           <Editable.Root
-            onValueChange={(e) => setChecklistName(e.value)}
-            value={checklistName}
-            placeholder={name}
-            width={"auto"}
-            fontSize={"14px"}
+            defaultValue={name}
+            onChange={(e) => setChecklistName(e.target.value)}
             onKeyDown={keyEventHandler}
-            onClick={() => {
-              setChecklistName(name);
-            }}
+            width={"100%"}
+            fontSize={"14px"}
           >
             <Editable.Preview />
             <Editable.Input />
           </Editable.Root>
         </Text>
-        <Button
-          colorPalette={"gray"}
-          variant="surface"
-          onClick={() => deleteChecklist(id)}
-        >
-          Delete
-        </Button>
+        <ChecklistDeleteConfirm deleteChecklist={deleteChecklist} id={id} />
       </Flex>
 
       {checkItems?.length > 0 ? (
@@ -97,5 +99,39 @@ export default function TodoList({
         card={card}
       />
     </Flex>
+  );
+}
+
+function ChecklistDeleteConfirm({ deleteChecklist, id }) {
+  return (
+    <DialogRoot role="alertdialog" placement={"center"}>
+      <DialogTrigger asChild>
+        <Button colorPalette={"gray"} variant="surface">
+          Delete
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you sure?</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <p>
+            This action cannot be undo. This will permanently delete your
+            checklist!
+          </p>
+        </DialogBody>
+        <DialogFooter>
+          <DialogActionTrigger asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogActionTrigger>
+          <DialogActionTrigger asChild>
+            <Button colorPalette="red" onClick={() => deleteChecklist(id)}>
+              Delete
+            </Button>
+          </DialogActionTrigger>
+        </DialogFooter>
+        <DialogCloseTrigger />
+      </DialogContent>
+    </DialogRoot>
   );
 }

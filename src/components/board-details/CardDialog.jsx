@@ -70,17 +70,14 @@ export default function CardDialog({ card, deleteCard, setReloadListCards }) {
             <Flex flexDirection={"row"} alignItems={"center"} gap={4}>
               <BsCardChecklist size={20} />
               <Editable.Root
-                placeholder={name}
+                defaultValue={name}
                 width={"90%"}
                 fontSize={"14px"}
                 onKeyDown={keyEventHandler}
+                onChange={(e) => setCardName(e.target.value)}
               >
                 <Editable.Preview />
-                <Editable.Input
-                  autoFocus={false}
-                  value={cardName}
-                  onChange={(e) => setCardName(e.target.value)}
-                />
+                <Editable.Input />
               </Editable.Root>
             </Flex>
           </DialogTitle>
