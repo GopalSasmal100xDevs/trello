@@ -259,7 +259,7 @@ export function ListCardHeader({
           alignItems={"center"}
           gap={2}
         >
-          <Editable.Root
+          {/* <Editable.Root
             placeholder={name}
             width={"auto"}
             fontWeight={"bold"}
@@ -271,10 +271,10 @@ export function ListCardHeader({
               value={listName}
               onChange={(e) => setListName(e.target.value)}
             />
-          </Editable.Root>
-          {/* <Text fontSize={"18px"} fontWeight={"bold"}>
+          </Editable.Root> */}
+          <Text fontSize={"18px"} fontWeight={"bold"}>
             {name}
-          </Text> */}
+          </Text>
 
           <BsThreeDots
             size={20}
