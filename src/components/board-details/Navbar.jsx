@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Box, Editable, Skeleton } from "@chakra-ui/react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { BiStar } from "react-icons/bi";
 
 import { putData } from "../../utils";
 import { toaster } from "../ui/toaster";
@@ -88,7 +87,7 @@ export default function Navbar({
               <Editable.Input />
             </Editable.Root>
 
-            <BiStar size={20} cursor={"pointer"} />
+            {/* <BiStar size={20} cursor={"pointer"} /> */}
           </Box>
         </Box>
       )}

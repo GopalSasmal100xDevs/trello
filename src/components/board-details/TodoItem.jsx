@@ -14,7 +14,6 @@ export default function TodoItem({
   setReloadChecklist,
 }) {
   const { id, name, state } = item;
-  console.log("Item ===>", item, id, name, card);
   const [todoItemName, setTodoItemName] = useState(name);
 
   function keyEventHandler(e) {
@@ -29,13 +28,13 @@ export default function TodoItem({
     if (todoItemName.trim() === name) return;
 
     const url = `${import.meta.env.VITE_CARD_DETAILS_BASE_URL}/${
-      card.id
-    }/checkItem/${itemId}?&key=${import.meta.env.VITE_TRELLO_API_KEY}&token=${
-      import.meta.env.VITE_TRELLO_TOKEN
-    }&name=${todoItemName.trim()}`;
+      card.idCard
+    }/checkItem/${itemId}?name=${todoItemName.trim()}&key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
 
     const promise = putData(url).then(() => {
-      todoItemName("");
+      setTodoItemName("");
       setReloadChecklist((prev) => !prev);
     });
 
