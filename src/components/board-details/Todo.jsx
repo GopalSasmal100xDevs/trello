@@ -90,8 +90,10 @@ export default function Todo({
           <TodoItem
             key={index}
             item={item}
+            card={card}
             deleteItemOnCheckList={deleteItemOnCheckList}
             changeTodoStatus={changeTodoStatus}
+            setReloadChecklist={setReloadChecklist}
           />
         ))}
       </Flex>

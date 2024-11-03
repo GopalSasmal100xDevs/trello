@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Box, Editable, Skeleton } from "@chakra-ui/react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { BiStar } from "react-icons/bi";
 
 import { putData } from "../../utils";
 import { toaster } from "../ui/toaster";
@@ -22,8 +21,8 @@ export default function Navbar({
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${updatedName.trim()}`;
 
     const promise = putData(url).then(() => {
+      setUpdatedName("");
       setReloadDetailsPage((prev) => !prev);
-      // setUpdatedName("");
     });
 
     toaster.promise(promise, {
@@ -77,22 +76,18 @@ export default function Navbar({
             gap={4}
           >
             <Editable.Root
-              onValueChange={(e) => setUpdatedName(e.value)}
-              value={updatedName}
-              placeholder={name}
+              defaultValue={name}
+              onKeyDown={keyEventHandler}
+              onChange={(e) => setUpdatedName(e.target.value)}
               width={"auto"}
               fontWeight={"bold"}
-              onKeyDown={keyEventHandler}
               fontSize={"18px"}
-              onClick={() => {
-                setUpdatedName(name);
-              }}
             >
               <Editable.Preview />
               <Editable.Input />
             </Editable.Root>
 
-            <BiStar size={20} cursor={"pointer"} />
+            {/* <BiStar size={20} cursor={"pointer"} /> */}
           </Box>
         </Box>
       )}
