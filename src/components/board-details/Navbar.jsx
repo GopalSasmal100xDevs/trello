@@ -2,14 +2,22 @@ import { useState } from "react";
 import { Box, Editable, Skeleton } from "@chakra-ui/react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
-import { putData } from "../../utils";
+import {
+  deleteData,
+  putData,
+  removeBoardFromRecentViewedBoards,
+} from "../../utils";
 import { toaster } from "../ui/toaster";
+import BoardDrawer from "./BoardDrawer";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar({
   board: { id, name },
   loading,
   setReloadDetailsPage,
 }) {
+  const navigate = useNavigate();
+
   const [updatedName, setUpdatedName] = useState(name);
 
   function updateName() {
@@ -45,19 +53,43 @@ export default function Navbar({
     }
   }
 
+  function deleteBoard() {
+    const url = `${import.meta.env.VITE_BOARD_BASE_URL}/${id}?key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+    const promise = deleteData(url).then(() => {
+      removeBoardFromRecentViewedBoards(id);
+      navigate("/");
+    });
+
+    toaster.promise(promise, {
+      success: {
+        title: "Your board has been deleted successfully!",
+        description: "Looks great",
+      },
+      error: {
+        title: "Failed to delete board name!",
+        description: "Something wrong with the deletion",
+      },
+      loading: { title: "Deleting board name...", description: "Please wait" },
+    });
+  }
+
   return (
     <Box bgColor="#0000003d" px={20}>
       {loading ? (
         <Skeleton flex="1" height="10" variant="pulse" />
       ) : (
         <Box
-          display={"inline-block"}
+          display={"flex"}
           position={"relative"}
           flexDirection={"row"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
           padding={"12px 0px"}
           flexGrow={1}
           flexWrap={"wrap"}
-          alignItems={"center"}
           width={"calc(100% - 23px)"}
           height={"auto"}
           gap={4}
@@ -68,7 +100,6 @@ export default function Navbar({
               <title>{name} | Trello</title>
             </Helmet>
           </HelmetProvider>
-
           <Box
             display={"flex"}
             alignItems={"center"}
@@ -89,6 +120,8 @@ export default function Navbar({
 
             {/* <BiStar size={20} cursor={"pointer"} /> */}
           </Box>
+
+          <BoardDrawer deleteBoard={deleteBoard} />
         </Box>
       )}
     </Box>
