@@ -2,18 +2,15 @@ import { useEffect, useState } from "react";
 import { Box, createListCollection, Heading } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { useDispatch } from "react-redux";
 
 import HomeControls from "../components/home/HeroControls";
 import HomeBoards from "../components/home/HomeBoards";
 import { SORT_BY_OPTIONS } from "../constants";
-import {
-  getData,
-  getSearchedBoards,
-  getSortedBoards,
-  postData,
-} from "../utils";
+import { getSearchedBoards, getSortedBoards, postData } from "../utils";
 import { toaster } from "../components/ui/toaster";
 import RecentViewed from "../components/home/RecentViewed";
+import { fetchAllBoards } from "../redux/actions/boardsAction";
 
 export default function HomePage() {
   const [sortCriteria, setSortCriteria] = useState("");
@@ -22,6 +19,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [searchString, setSearchString] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const sortBy = createListCollection(SORT_BY_OPTIONS);
 
@@ -76,26 +74,7 @@ export default function HomePage() {
   const searchedBoards = getSearchedBoards([...sortedBoards], searchString);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const url = `${import.meta.env.VITE_ALL_BOARDS_BASE_URL}/?key=${
-        import.meta.env.VITE_TRELLO_API_KEY
-      }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
-
-      try {
-        const response = await getData(url);
-        setBoards(response.data);
-      } catch (_error) {
-        toaster.create({
-          description: "Failed to load boards!",
-          type: "error",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-    getRecentViewedBoards();
+    dispatch(fetchAllBoards());
   }, []);
 
   return (

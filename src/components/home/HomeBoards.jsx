@@ -1,14 +1,12 @@
+import { useSelector } from "react-redux";
 import { Box, Flex, Skeleton } from "@chakra-ui/react";
 
 import CreateBoardsDialog from "../dialogs/createBoardsDialog";
 import Board from "./Board";
 
-export default function HomeBoards({
-  boards,
-  createBoard,
-  handleBoardClick,
-  loading,
-}) {
+export default function HomeBoards({ createBoard, handleBoardClick }) {
+  const { loading, boards } = useSelector((state) => state.allBoards);
+
   return loading ? (
     <Flex gapX={6} gapY={6} flexWrap={"wrap"} alignItems={"center"} mt={8}>
       {[1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => (
