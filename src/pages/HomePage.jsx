@@ -9,19 +9,16 @@ import HomeBoards from "../components/home/HomeBoards";
 import { SORT_BY_OPTIONS } from "../constants";
 import { getSearchedBoards, getSortedBoards, postData } from "../utils";
 import { toaster } from "../components/ui/toaster";
-import RecentViewed from "../components/home/RecentViewed";
+import RecentViewedBoards from "../components/home/RecentViewedBoards";
 import { fetchAllBoards } from "../redux/actions/boardsAction";
+import { loadRecentlyViewedBoards } from "../redux/reducers/recentViewedBoardsReducer";
 
 export default function HomePage() {
-  const [sortCriteria, setSortCriteria] = useState("");
   const [recentViewedBoards, setRecentViewedBoards] = useState([]);
   const [boards, setBoards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchString, setSearchString] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const sortBy = createListCollection(SORT_BY_OPTIONS);
 
   function createBoard(title, color) {
     const url = `${
@@ -47,34 +44,18 @@ export default function HomePage() {
     });
   }
 
-  function handleBoardClick(board) {
-    let recentBoards =
-      JSON.parse(localStorage.getItem("recentViewedBoards")) || [];
-
-    recentBoards = recentBoards.filter(({ id }) => id !== board.id);
-
-    recentBoards = [{ id: board.id, name: board.name }, ...recentBoards];
-
-    if (recentBoards.length > 4) {
-      recentBoards = recentBoards.slice(0, 4);
-    }
-    localStorage.setItem("recentViewedBoards", JSON.stringify(recentBoards));
-    setRecentViewedBoards(recentBoards);
-
-    navigate(`/boards/${board.id}`);
-  }
-
   function getRecentViewedBoards() {
     const recentBoards =
       JSON.parse(localStorage.getItem("recentViewedBoards")) || [];
     setRecentViewedBoards(recentBoards);
   }
 
-  const sortedBoards = getSortedBoards([...boards], sortCriteria);
-  const searchedBoards = getSearchedBoards([...sortedBoards], searchString);
+  // const sortedBoards = getSortedBoards([...boards], sortCriteria);
+  // const searchedBoards = getSearchedBoards([...sortedBoards], searchString);
 
   useEffect(() => {
     dispatch(fetchAllBoards());
+    dispatch(loadRecentlyViewedBoards());
   }, []);
 
   return (
@@ -96,25 +77,13 @@ export default function HomePage() {
       </Heading>
 
       {/* Recently Viewed Boards */}
-      <RecentViewed
-        recentViewedBoards={recentViewedBoards}
-        setRecentViewedBoards={setRecentViewedBoards}
-      />
+      <RecentViewedBoards />
 
       {/* Home Controlls */}
 
-      <HomeControls
-        sortBy={sortBy}
-        setSortCriteria={setSortCriteria}
-        setSearchString={setSearchString}
-      />
+      <HomeControls />
 
-      <HomeBoards
-        createBoard={createBoard}
-        boards={searchedBoards}
-        handleBoardClick={handleBoardClick}
-        loading={loading}
-      />
+      <HomeBoards />
     </Box>
   );
 }

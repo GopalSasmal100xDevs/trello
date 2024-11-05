@@ -1,6 +1,9 @@
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { IoSearchSharp } from "react-icons/io5";
 import {
   Box,
+  createListCollection,
   Flex,
   Input,
   SelectContent,
@@ -13,12 +16,18 @@ import {
 
 import { Field } from "../ui/field";
 import { InputGroup } from "../ui/input-group";
+import { SORT_BY_OPTIONS } from "../../constants";
+import { sortBoards } from "../../redux/reducers/boardsReducer";
 
-export default function HeroControls({
-  sortBy,
-  setSortCriteria,
-  setSearchString,
-}) {
+export default function HeroControls() {
+  const [searchString, setSearchString] = useState("");
+  const sortBy = createListCollection(SORT_BY_OPTIONS);
+  const dispatch = useDispatch();
+
+  function handleSelect(value) {
+    dispatch(sortBoards({ value }));
+  }
+
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"} mt={8}>
       <Box>
@@ -38,7 +47,7 @@ export default function HeroControls({
                 item={value}
                 key={value}
                 cursor={"pointer"}
-                onClick={() => setSortCriteria(value)}
+                onClick={() => handleSelect(value)}
               >
                 {label}
               </SelectItem>

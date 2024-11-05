@@ -1,33 +1,22 @@
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Flex, Grid, Heading, Text } from "@chakra-ui/react";
 import { BsClockHistory } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
 import Board from "./Board";
+import { updateRecentlyViewedBoards } from "../../redux/reducers/recentViewedBoardsReducer";
 
-export default function RecentViewed({
-  recentViewedBoards,
-  setRecentViewedBoards,
-}) {
+export default function RecentViewedBoards() {
+  const { boards } = useSelector((state) => state.recentViewedBoards);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function handleBoardClick(id, name) {
-    let recentBoards =
-      JSON.parse(localStorage.getItem("recentViewedBoards")) || [];
-
-    recentBoards = recentBoards.filter((board) => id !== board.id);
-
-    recentBoards = [{ id, name }, ...recentBoards];
-
-    if (recentBoards.length > 4) {
-      recentBoards = recentBoards.slice(0, 4);
-    }
-    localStorage.setItem("recentViewedBoards", JSON.stringify(recentBoards));
-    setRecentViewedBoards(recentBoards);
-
+    dispatch(updateRecentlyViewedBoards({ id, name }));
     navigate(`/boards/${id}`);
   }
 
-  return recentViewedBoards.length > 0 ? (
+  return boards.length > 0 ? (
     <Grid>
       <Heading
         size="md"
@@ -43,7 +32,7 @@ export default function RecentViewed({
       </Heading>
 
       <Flex gapX={5} gapY={5} flexWrap={"wrap"} mt={8}>
-        {recentViewedBoards.map(({ id, name }) => (
+        {boards.map(({ id, name }) => (
           <Box
             key={id}
             cursor={"pointer"}

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Card, Flex, HStack, Input, Stack, Text } from "@chakra-ui/react";
 
 import { Button } from "../ui/button";
@@ -14,16 +15,22 @@ import {
 } from "../ui/dialog";
 import { Field } from "../ui/field";
 import { BOARD_COLORS } from "../../constants";
+import { createNewBoard } from "../../redux/actions/boardsAction";
 
-export default function CreateBoardsDialog({ createBoard }) {
+export default function CreateBoardsDialog() {
   const ref = useRef(null);
   const [boardTitle, setBoardTitle] = useState("");
   const [selectBoardColor, setSelectBoardColor] = useState(BOARD_COLORS[0]);
+  const dispatch = useDispatch();
 
   function handleKeyEvent(e) {
     if (e.key === "Enter") {
       createBoard(boardTitle.trim(), selectBoardColor);
     }
+  }
+
+  function createBoard(title, color) {
+    dispatch(createNewBoard({ title, color }));
   }
 
   return (
