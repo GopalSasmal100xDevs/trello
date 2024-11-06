@@ -1,102 +1,22 @@
-import { useCallback, useEffect } from "react";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Box, Grid, HStack, Skeleton } from "@chakra-ui/react";
 
-import {
-  getData,
-  postData,
-  putData,
-  removeBoardFromRecentViewedBoards,
-} from "../utils";
+import { putData } from "../utils";
 import { toaster } from "../components/ui/toaster";
 import Navbar from "../components/board-details/Navbar";
 import ListCard from "../components/board-details/ListCard";
 import CreateListCard from "../components/board-details/CreateListCard";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBoardDetails } from "../redux/actions/boardDetailsAction";
+import { featchAllLists } from "../redux/actions/listAction";
 
 export default function BoardDetailsPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [listsLoading, setListLoading] = useState(true);
-  const [boardLists, setBoardLists] = useState([]);
-  const [board, setBoard] = useState({});
-  const [activeAddCard, setActiveAddCard] = useState(false);
-  const [listName, setListName] = useState("");
   const [reloadDetailsPage, setReloadDetailsPage] = useState(false);
-
-  function createListOnBoard() {
-    if (listName.trim().length == 0) return;
-
-    const url = `${
-      import.meta.env.VITE_BOARD_BASE_URL
-    }/${id}/lists?name=${listName}&key=${
-      import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
-
-    const promise = postData(url).then(() => {
-      setListName("");
-      setReloadDetailsPage((prev) => !prev);
-    });
-
-    toaster.promise(promise, {
-      success: {
-        title: "Your list has been created!",
-        description: "Looks great",
-      },
-      error: {
-        title: "Failed to create list!",
-        description: "Something wrong with the creation",
-      },
-      loading: {
-        title: "Creating list on board...",
-        description: "Please wait",
-      },
-    });
-  }
-
-  const fetchBoardDetails = useCallback(
-    async (id) => {
-      const url = `${import.meta.env.VITE_BOARD_BASE_URL}/${id}?key=${
-        import.meta.env.VITE_TRELLO_API_KEY
-      }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
-
-      try {
-        const response = await getData(url);
-        setBoard(response.data);
-      } catch (_err) {
-        toaster.create({
-          description: "Failed to load board details!",
-          type: "error",
-        });
-        removeBoardFromRecentViewedBoards(id);
-        navigate("/error");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [id]
-  );
-
-  const fetchBoardLists = useCallback(
-    async (id) => {
-      const url = `${import.meta.env.VITE_BOARD_BASE_URL}/${id}/lists?key=${
-        import.meta.env.VITE_TRELLO_API_KEY
-      }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
-
-      try {
-        const response = await getData(url);
-        setBoardLists(response.data);
-      } catch (_err) {
-        toaster.create({
-          description: "Failed to load board lists!",
-          type: "error",
-        });
-      } finally {
-        setListLoading(false);
-      }
-    },
-    [id, reloadDetailsPage]
+  const dispatch = useDispatch();
+  const { loading, lists } = useSelector(
+    (state) => state.boardDetails.board.boardLists
   );
 
   function archiveList(id) {
@@ -125,21 +45,14 @@ export default function BoardDetailsPage() {
   }
 
   useEffect(() => {
-    fetchBoardDetails(id);
-  }, [id, fetchBoardDetails]);
-
-  useEffect(() => {
-    fetchBoardLists(id);
-  }, [id, fetchBoardLists, reloadDetailsPage]);
+    dispatch(fetchBoardDetails({ id }));
+    dispatch(featchAllLists({ id }));
+  }, [id]);
 
   return (
     <Box position={"absolute"} width={"full"}>
-      <Navbar
-        board={board}
-        loading={loading}
-        setReloadDetailsPage={setReloadDetailsPage}
-      />
-      {listsLoading ? (
+      <Navbar setReloadDetailsPage={setReloadDetailsPage} />
+      {loading ? (
         <Box display={"flex"} flexDirection={"row"} gap={10} mt={8} ml={20}>
           {[1, 2, 3, 4].map((_, index) => (
             <Skeleton height="200px" width="300px" key={index} />
@@ -155,17 +68,11 @@ export default function BoardDetailsPage() {
           pr={10}
         >
           <HStack alignItems={"flex-start"} gap={4}>
-            {boardLists.map((list, index) => (
+            {lists.map((list, index) => (
               <ListCard key={index} list={list} archiveList={archiveList} />
             ))}
 
-            <CreateListCard
-              listName={listName}
-              setListName={setListName}
-              setActiveAddCard={setActiveAddCard}
-              activeAddCard={activeAddCard}
-              createListOnBoard={createListOnBoard}
-            />
+            <CreateListCard />
           </HStack>
         </Grid>
       )}

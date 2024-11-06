@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
 import {
@@ -23,8 +23,11 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteBoard } from "../../redux/actions/boardDetailsAction";
+import { useNavigate } from "react-router-dom";
 
-export default function BoardDrawer({ deleteBoard }) {
+export default function BoardDrawer() {
   const drawerRef = useRef(null);
 
   return (
@@ -38,7 +41,7 @@ export default function BoardDrawer({ deleteBoard }) {
           <DrawerTitle>Menu</DrawerTitle>
         </DrawerHeader>
         <DrawerBody>
-          <DeleteBoardConfirm deleteBoard={deleteBoard} />
+          <DeleteBoardConfirm />
         </DrawerBody>
         <DrawerCloseTrigger />
       </DrawerContent>
@@ -46,11 +49,33 @@ export default function BoardDrawer({ deleteBoard }) {
   );
 }
 
-function DeleteBoardConfirm({ deleteBoard }) {
+function DeleteBoardConfirm() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const { id } = useSelector(
+    (state) => state.boardDetails.board.boardInfo.details
+  );
+
+  async function handleBoardDelete() {
+    setDeleteLoading(true);
+    const resultAction = await dispatch(deleteBoard({ id }));
+    if (deleteBoard.fulfilled.match(resultAction)) {
+      setDeleteLoading(false);
+      navigate("/");
+    }
+  }
+
   return (
     <DialogRoot role="alertdialog" placement={"center"}>
       <DialogTrigger asChild>
-        <Button variant="ghost" colorPalette={"red"} size="sm">
+        <Button
+          variant="ghost"
+          colorPalette={"red"}
+          size="sm"
+          loading={deleteLoading}
+        >
           Delete card
         </Button>
       </DialogTrigger>
@@ -68,7 +93,7 @@ function DeleteBoardConfirm({ deleteBoard }) {
             <Button variant="outline">Cancel</Button>
           </DialogActionTrigger>
           <DialogActionTrigger asChild>
-            <Button colorPalette="red" onClick={deleteBoard}>
+            <Button colorPalette="red" onClick={handleBoardDelete}>
               Delete
             </Button>
           </DialogActionTrigger>

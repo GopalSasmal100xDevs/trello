@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import { Box, createListCollection, Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useDispatch } from "react-redux";
 
 import HomeControls from "../components/home/HeroControls";
 import HomeBoards from "../components/home/HomeBoards";
-import { SORT_BY_OPTIONS } from "../constants";
-import { getSearchedBoards, getSortedBoards, postData } from "../utils";
+import { postData } from "../utils";
 import { toaster } from "../components/ui/toaster";
 import RecentViewedBoards from "../components/home/RecentViewedBoards";
 import { fetchAllBoards } from "../redux/actions/boardsAction";
@@ -15,8 +14,6 @@ import { loadRecentlyViewedBoards } from "../redux/reducers/recentViewedBoardsRe
 
 export default function HomePage() {
   const [recentViewedBoards, setRecentViewedBoards] = useState([]);
-  const [boards, setBoards] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -76,13 +73,8 @@ export default function HomePage() {
         Boards
       </Heading>
 
-      {/* Recently Viewed Boards */}
       <RecentViewedBoards />
-
-      {/* Home Controlls */}
-
       <HomeControls />
-
       <HomeBoards />
     </Box>
   );

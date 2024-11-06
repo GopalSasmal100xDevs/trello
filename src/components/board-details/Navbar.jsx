@@ -1,56 +1,37 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Editable, Skeleton } from "@chakra-ui/react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
-import {
-  deleteData,
-  putData,
-  removeBoardFromRecentViewedBoards,
-} from "../../utils";
+import { deleteData, removeBoardFromRecentViewedBoards } from "../../utils";
 import { toaster } from "../ui/toaster";
 import BoardDrawer from "./BoardDrawer";
-import { useNavigate } from "react-router-dom";
+import { updateBoardName } from "../../redux/actions/boardDetailsAction";
 
-export default function Navbar({
-  board: { id, name },
-  loading,
-  setReloadDetailsPage,
-}) {
+export default function Navbar() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const { loading } = useSelector(
+    (state) => state.boardDetails.board.boardInfo
+  );
+  const { id, name } = useSelector(
+    (state) => state.boardDetails.board.boardInfo.details
+  );
   const [updatedName, setUpdatedName] = useState(name);
-
-  function updateName() {
-    if (updatedName.length === 0) return;
-    if (updatedName.trim() === name) return;
-
-    const url = `${import.meta.env.VITE_BOARD_BASE_URL}/${id}?key=${
-      import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${updatedName.trim()}`;
-
-    const promise = putData(url).then(() => {
-      setUpdatedName("");
-      setReloadDetailsPage((prev) => !prev);
-    });
-
-    toaster.promise(promise, {
-      success: {
-        title: "Your board name has been updated successfully!",
-        description: "Looks great",
-      },
-      error: {
-        title: "Failed to update board name!",
-        description: "Something wrong with the updatation",
-      },
-      loading: { title: "Updating board name...", description: "Please wait" },
-    });
-  }
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
       e.preventDefault();
-      updateName();
+      handleUpdateBoardName();
     }
+  }
+
+  function handleUpdateBoardName() {
+    if (updatedName.length === 0) return;
+    if (updatedName.trim() === name) return;
+
+    dispatch(updateBoardName({ id, updatedName }));
   }
 
   function deleteBoard() {
@@ -97,9 +78,10 @@ export default function Navbar({
           {/* Dyanmic title */}
           <HelmetProvider>
             <Helmet>
-              <title>{name} | Trello</title>
+              <title>{name || ""} | Trello</title>
             </Helmet>
           </HelmetProvider>
+
           <Box
             display={"flex"}
             alignItems={"center"}
@@ -121,7 +103,7 @@ export default function Navbar({
             {/* <BiStar size={20} cursor={"pointer"} /> */}
           </Box>
 
-          <BoardDrawer deleteBoard={deleteBoard} />
+          <BoardDrawer />
         </Box>
       )}
     </Box>

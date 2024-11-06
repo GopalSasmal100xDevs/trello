@@ -16,12 +16,14 @@ import {
 import { Field } from "../ui/field";
 import { BOARD_COLORS } from "../../constants";
 import { createNewBoard } from "../../redux/actions/boardsAction";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateBoardsDialog() {
   const ref = useRef(null);
   const [boardTitle, setBoardTitle] = useState("");
   const [selectBoardColor, setSelectBoardColor] = useState(BOARD_COLORS[0]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   function handleKeyEvent(e) {
     if (e.key === "Enter") {
@@ -29,8 +31,12 @@ export default function CreateBoardsDialog() {
     }
   }
 
-  function createBoard(title, color) {
-    dispatch(createNewBoard({ title, color }));
+  async function createBoard(title, color) {
+    const resultAction = await dispatch(createNewBoard({ title, color }));
+    if (createNewBoard.fulfilled.match(resultAction)) {
+      const { id } = resultAction.payload.data;
+      navigate(`/boards/${id}`);
+    }
   }
 
   return (

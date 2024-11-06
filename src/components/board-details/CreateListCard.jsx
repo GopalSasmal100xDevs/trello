@@ -1,19 +1,30 @@
 import { Button, Card, Flex, Input, Stack } from "@chakra-ui/react";
+import { useState } from "react";
 import { GrFormClose } from "react-icons/gr";
+import { useDispatch, useSelector } from "react-redux";
+import { createNewList, featchAllLists } from "../../redux/actions/listAction";
 
-export default function CreateListCard({
-  listName,
-  activeAddCard,
-  setListName,
-  setActiveAddCard,
-  createListOnBoard,
-}) {
+export default function CreateListCard() {
+  const dispatch = useDispatch();
+  const [listName, setListName] = useState("");
+  const [activeAddCard, setActiveAddCard] = useState(false);
+  const { id } = useSelector(
+    (state) => state.boardDetails.board.boardInfo.details
+  );
+
   function keyEventHandler(e) {
     if (e.key === "Enter") {
-      createListOnBoard();
+      handleCreateList();
     } else if (e.key === "Escape") {
       setActiveAddCard(false);
     }
+  }
+
+  async function handleCreateList() {
+    if (listName.trim().length == 0) return;
+    await dispatch(createNewList({ id, name: listName.trim() })).unwrap();
+    dispatch(featchAllLists({ id }));
+    setListName("");
   }
 
   return activeAddCard ? (
@@ -31,7 +42,7 @@ export default function CreateListCard({
             <Button
               variant={"solid"}
               colorPalette={"cyan"}
-              onClick={createListOnBoard}
+              onClick={handleCreateList}
             >
               Add list
             </Button>
