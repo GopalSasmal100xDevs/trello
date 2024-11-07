@@ -10,12 +10,14 @@ import {
   silentFetchCardCheckLists,
   updateTodoItemName,
 } from "../../redux/actions/cardAction";
+import { LuClock2 } from "react-icons/lu";
 
 export default function TodoItem({ item, checklist }) {
   const { id, name, state } = item;
   const { idCard } = checklist;
   const dispatch = useDispatch();
   const [todoItemName, setTodoItemName] = useState(name);
+  const [updating, setUpdating] = useState(false);
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
@@ -49,15 +51,16 @@ export default function TodoItem({ item, checklist }) {
   }
 
   async function handleChangeTodoStatus(isComplete, itemId) {
+    setUpdating(true);
     await dispatch(changeTodoStatus({ isComplete, itemId, idCard }));
 
     if (changeTodoStatus.fulfilled) {
+      dispatch(silentFetchCardCheckLists({ id: idCard }));
       toaster.success({
         title: "Your todo status has been changed successfully!",
         description: "Looks great",
       });
-
-      dispatch(silentFetchCardCheckLists({ id: idCard }));
+      setUpdating(false);
     } else if (changeTodoStatus.rejected) {
       toaster.error({
         title: "Failed to change todo status!",
@@ -88,6 +91,7 @@ export default function TodoItem({ item, checklist }) {
           checked={state === "complete"}
           onChange={() => handleChangeTodoStatus(state, id)}
         />
+        {updating ? <LuClock2 size={20} /> : null}
 
         <Editable.Root
           defaultValue={name}

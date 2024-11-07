@@ -2,7 +2,7 @@ import { Button, Card, Flex, Input, Stack } from "@chakra-ui/react";
 import { useState } from "react";
 import { GrFormClose } from "react-icons/gr";
 import { useDispatch, useSelector } from "react-redux";
-import { createNewList, featchAllLists } from "../../redux/actions/listAction";
+import { createNewList, fetchAllLists } from "../../redux/actions/listAction";
 
 export default function CreateListCard() {
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ export default function CreateListCard() {
   async function handleCreateList() {
     if (listName.trim().length == 0) return;
     await dispatch(createNewList({ id, name: listName.trim() })).unwrap();
-    dispatch(featchAllLists({ id }));
+    dispatch(fetchAllLists({ id }));
     setListName("");
   }
 

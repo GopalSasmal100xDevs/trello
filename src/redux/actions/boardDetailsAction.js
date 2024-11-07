@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { toaster } from "../../components/ui/toaster";
 import {
   deleteData,
   getData,
@@ -15,13 +14,9 @@ export const fetchBoardDetails = createAsyncThunk(
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
 
     try {
-      const response = await getData(url);
-      return response.data;
+      const { data } = await getData(url);
+      return data;
     } catch (_err) {
-      toaster.create({
-        description: "Failed to load board details!",
-        type: "error",
-      });
       throw new Error("Failed to load board details!");
     }
   }
@@ -35,8 +30,8 @@ export const updateBoardName = createAsyncThunk(
     }&token=${import.meta.env.VITE_TRELLO_TOKEN}&name=${updatedName.trim()}`;
 
     try {
-      const response = await putData(url);
-      return response.data;
+      const { data } = await putData(url);
+      return data;
     } catch (_err) {
       throw new Error("Error updating board name");
     }

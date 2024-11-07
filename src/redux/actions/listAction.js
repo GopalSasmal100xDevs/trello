@@ -19,8 +19,24 @@ export const createNewList = createAsyncThunk(
   }
 );
 
-export const featchAllLists = createAsyncThunk(
+export const fetchAllLists = createAsyncThunk(
   "boardDetails/fetchAllLists",
+  async ({ id }) => {
+    const url = `${import.meta.env.VITE_BOARD_BASE_URL}/${id}/lists?key=${
+      import.meta.env.VITE_TRELLO_API_KEY
+    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+
+    try {
+      const response = await getData(url);
+      return response.data;
+    } catch (_err) {
+      throw new Error("Failed to load board lists!");
+    }
+  }
+);
+
+export const silentlyFetchAllLists = createAsyncThunk(
+  "boardDetails/silentlyFetchAllLists",
   async ({ id }) => {
     const url = `${import.meta.env.VITE_BOARD_BASE_URL}/${id}/lists?key=${
       import.meta.env.VITE_TRELLO_API_KEY

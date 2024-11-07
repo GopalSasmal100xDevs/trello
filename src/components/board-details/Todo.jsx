@@ -21,6 +21,7 @@ export default function Todo({
   const [item, setItem] = useState("");
   const dispatch = useDispatch();
   const { idCard } = checklist;
+  const [adding, setAdding] = useState(false);
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
@@ -32,7 +33,7 @@ export default function Todo({
 
   async function handleAddItemsOnCheckList() {
     if (item.trim().length == 0) return;
-
+    setAdding(true);
     await dispatch(addItemsOnCheckList({ id, item }));
 
     if (addItemsOnCheckList.fulfilled) {
@@ -41,8 +42,9 @@ export default function Todo({
         description: "Looks great",
       });
       setItem("");
+      setAdding(false);
       dispatch(silentFetchCardCheckLists({ id: idCard }));
-    } else if (addItemsOnCheckList.rejected) {
+    } else {
       toaster.error({
         title: "Failed to add items on checklist!",
         description: "Something wrong with the addition",
@@ -79,6 +81,7 @@ export default function Todo({
                 colorPalette={"cyan"}
                 variant="surface"
                 onClick={handleAddItemsOnCheckList}
+                loading={adding}
               >
                 Add
               </Button>

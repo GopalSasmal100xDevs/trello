@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 
 import {
@@ -18,12 +19,15 @@ import {
   silentFetchCardCheckLists,
 } from "../../redux/actions/cardAction";
 import { toaster } from "../ui/toaster";
+import { GrInProgress } from "react-icons/gr";
 
 export default function TodoItemDeleteConfirm({ id, checklist }) {
   const dispatch = useDispatch();
+  const [updating, setUpdating] = useState(false);
   const { idCard } = checklist;
 
   async function handleDeleteItemOnCheckList() {
+    setUpdating(true);
     await dispatch(deleteItemOnCheckList({ cardId: idCard, itemId: id }));
 
     if (deleteItemOnCheckList.fulfilled) {
@@ -31,7 +35,7 @@ export default function TodoItemDeleteConfirm({ id, checklist }) {
         title: "Your item on checklist has been deleted successfully!",
         description: "Looks great",
       });
-
+      setUpdating(false);
       dispatch(silentFetchCardCheckLists({ id: idCard }));
     } else if (deleteItemOnCheckList.rejected) {
       toaster.error({
@@ -44,7 +48,11 @@ export default function TodoItemDeleteConfirm({ id, checklist }) {
   return (
     <DialogRoot role="alertdialog" placement={"center"}>
       <DialogTrigger asChild>
-        <RxCross1 size={16} cursor={"pointer"} onClick={() => {}} />
+        {updating ? (
+          <GrInProgress size={16} cursor={"not-allowed"} />
+        ) : (
+          <RxCross1 size={16} cursor={"pointer"} />
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

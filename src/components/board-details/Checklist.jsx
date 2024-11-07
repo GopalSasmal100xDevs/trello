@@ -29,6 +29,7 @@ export default function CheckList({ card }) {
   const [openCheckListInput, setOpenCheckListInput] = useState(false);
   const [checklistTitle, setChecklistTitle] = useState("");
   const [reloadChecklist, setReloadChecklist] = useState(false);
+  const [checklistLoading, setChecklistLoading] = useState(false);
   const { loading, cardCheckLists } = useSelector(
     (state) => state.activeCard.card
   );
@@ -42,6 +43,7 @@ export default function CheckList({ card }) {
   }
 
   async function handleAddNewCheckList() {
+    setChecklistLoading(true);
     if (checklistTitle.trim().length == 0) return;
     await dispatch(addNewCheckList({ id, title: checklistTitle }));
 
@@ -52,6 +54,7 @@ export default function CheckList({ card }) {
         description: "Looks great",
       });
       setOpenCheckListInput(false);
+      setChecklistLoading(false);
       dispatch(silentFetchCardCheckLists({ id }));
     } else {
       toaster.error({
@@ -145,7 +148,11 @@ export default function CheckList({ card }) {
             </Stack>
           </Card.Body>
           <Card.Footer justifyContent="flex-start">
-            <Button colorPalette="cyan" onClick={handleAddNewCheckList}>
+            <Button
+              colorPalette="cyan"
+              onClick={handleAddNewCheckList}
+              loading={checklistLoading}
+            >
               Add
             </Button>
           </Card.Footer>

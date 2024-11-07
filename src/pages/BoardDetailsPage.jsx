@@ -9,7 +9,7 @@ import ListCard from "../components/board-details/ListCard";
 import CreateListCard from "../components/board-details/CreateListCard";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBoardDetails } from "../redux/actions/boardDetailsAction";
-import { featchAllLists } from "../redux/actions/listAction";
+import { fetchAllLists } from "../redux/actions/listAction";
 
 export default function BoardDetailsPage() {
   const { id } = useParams();
@@ -46,7 +46,7 @@ export default function BoardDetailsPage() {
 
   useEffect(() => {
     dispatch(fetchBoardDetails({ id }));
-    dispatch(featchAllLists({ id }));
+    dispatch(fetchAllLists({ id }));
   }, [id]);
 
   return (

@@ -4,7 +4,11 @@ import {
   fetchBoardDetails,
   updateBoardName,
 } from "../actions/boardDetailsAction";
-import { createNewList, featchAllLists } from "../actions/listAction";
+import {
+  createNewList,
+  fetchAllLists,
+  silentlyFetchAllLists,
+} from "../actions/listAction";
 
 const initialState = {
   board: {
@@ -45,18 +49,23 @@ const boardDetailsSlice = createSlice({
 
     /** Fetching all lists on a board */
     builder
-      .addCase(featchAllLists.pending, (state) => {
+      .addCase(fetchAllLists.pending, (state) => {
         state.board.boardLists.loading = true;
         state.error.listsError = null;
       })
-      .addCase(featchAllLists.fulfilled, (state, action) => {
+      .addCase(fetchAllLists.fulfilled, (state, action) => {
         state.board.boardLists.loading = false;
         state.board.boardLists.lists = action.payload;
       })
-      .addCase(featchAllLists.rejected, (state, action) => {
+      .addCase(fetchAllLists.rejected, (state, action) => {
         state.board.boardLists.loading = false;
         state.error.listsError = action.error.message;
       });
+
+    /** Silently fetching all lists on a board */
+    builder.addCase(silentlyFetchAllLists.fulfilled, (state, action) => {
+      state.board.boardLists.lists = action.payload;
+    });
 
     /** Creating New List on a board */
     builder.addCase(createNewList.fulfilled, () => {});

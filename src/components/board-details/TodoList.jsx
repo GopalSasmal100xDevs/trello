@@ -108,17 +108,20 @@ export default function TodoList({
 
 function ChecklistDeleteConfirm({ checklist }) {
   const { id, idCard } = checklist;
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   async function handleDeleteChecklist() {
+    setLoading(true);
     await dispatch(deleteChecklist({ id }));
     if (deleteChecklist.fulfilled) {
       toaster.success({
         title: "Your checklist has been deleted successfully!",
         description: "Looks great",
       });
+      setLoading(false);
       dispatch(silentFetchCardCheckLists({ id: idCard }));
-    } else if (deleteChecklist.rejected) {
+    } else {
       toaster.error({
         title: "Failed to delete checklist!",
         description: "Something wrong with the deletion",
@@ -129,7 +132,7 @@ function ChecklistDeleteConfirm({ checklist }) {
   return (
     <DialogRoot role="alertdialog" placement={"center"}>
       <DialogTrigger asChild>
-        <Button colorPalette={"gray"} variant="surface">
+        <Button colorPalette={"gray"} variant="surface" loading={loading}>
           Delete
         </Button>
       </DialogTrigger>

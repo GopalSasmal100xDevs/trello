@@ -46,10 +46,8 @@ const boardsSlice = createSlice({
         state.error = action.error.message;
       });
 
-    builder
-      .addCase(createNewBoard.pending, (state) => {})
-      .addCase(createNewBoard.fulfilled, (state, action) => {})
-      .addCase(createNewBoard.rejected, (state, action) => {});
+    /** Creating new board */
+    builder.addCase(createNewBoard.fulfilled);
   },
 });
 
