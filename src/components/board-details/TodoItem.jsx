@@ -1,57 +1,69 @@
 import { useState } from "react";
-import { Box, Editable, Flex, Text } from "@chakra-ui/react";
+import { Box, Editable, Flex } from "@chakra-ui/react";
 
 import TodoItemDeleteConfirm from "./DeleteTodoConfirm";
 import { Checkbox } from "../ui/checkbox";
 import { toaster } from "../ui/toaster";
-import { putData } from "../../utils";
-
-export default function TodoItem({
-  item,
-  card,
-  deleteItemOnCheckList,
+import { useDispatch } from "react-redux";
+import {
   changeTodoStatus,
-  setReloadChecklist,
-}) {
+  silentFetchCardCheckLists,
+  updateTodoItemName,
+} from "../../redux/actions/cardAction";
+
+export default function TodoItem({ item, checklist }) {
   const { id, name, state } = item;
+  const { idCard } = checklist;
+  const dispatch = useDispatch();
   const [todoItemName, setTodoItemName] = useState(name);
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
       e.preventDefault();
-      updateTodoItemName(id);
+      handleUpdateTodoItemName(id);
     }
   }
 
-  function updateTodoItemName(itemId) {
+  async function handleUpdateTodoItemName(itemId) {
     if (todoItemName.length === 0) return;
     if (todoItemName.trim() === name) return;
 
-    const url = `${import.meta.env.VITE_CARD_DETAILS_BASE_URL}/${
-      card.idCard
-    }/checkItem/${itemId}?name=${todoItemName.trim()}&key=${
-      import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+    await dispatch(
+      updateTodoItemName({ idCard, idItem: itemId, name: todoItemName.trim() })
+    );
 
-    const promise = putData(url).then(() => {
-      setTodoItemName("");
-      setReloadChecklist((prev) => !prev);
-    });
-
-    toaster.promise(promise, {
-      success: {
+    if (updateTodoItemName.fulfilled) {
+      toaster.success({
         title: "Your checklist item name has been updated successfully!",
         description: "Looks great",
-      },
-      error: {
+      });
+      setTodoItemName("");
+
+      dispatch(silentFetchCardCheckLists({ id: idCard }));
+    } else if (updateTodoItemName.rejected) {
+      toaster.error({
         title: "Failed to update checklist item name!",
         description: "Something wrong with the updatation",
-      },
-      loading: {
-        title: "Updating checklist item name...",
-        description: "Please wait",
-      },
-    });
+      });
+    }
+  }
+
+  async function handleChangeTodoStatus(isComplete, itemId) {
+    await dispatch(changeTodoStatus({ isComplete, itemId, idCard }));
+
+    if (changeTodoStatus.fulfilled) {
+      toaster.success({
+        title: "Your todo status has been changed successfully!",
+        description: "Looks great",
+      });
+
+      dispatch(silentFetchCardCheckLists({ id: idCard }));
+    } else if (changeTodoStatus.rejected) {
+      toaster.error({
+        title: "Failed to change todo status!",
+        description: "Something wrong with the change",
+      });
+    }
   }
 
   return (
@@ -74,7 +86,7 @@ export default function TodoItem({
           colorPalette={"cyan"}
           cursor={"pointer"}
           checked={state === "complete"}
-          onChange={() => changeTodoStatus(state, id)}
+          onChange={() => handleChangeTodoStatus(state, id)}
         />
 
         <Editable.Root
@@ -90,10 +102,7 @@ export default function TodoItem({
           <Editable.Input />
         </Editable.Root>
       </Box>
-      <TodoItemDeleteConfirm
-        id={id}
-        deleteItemOnCheckList={deleteItemOnCheckList}
-      />
+      <TodoItemDeleteConfirm id={id} checklist={checklist} />
     </Flex>
   );
 }

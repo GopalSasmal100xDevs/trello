@@ -2,85 +2,52 @@ import { useState } from "react";
 import { Box, Flex, Input, Stack } from "@chakra-ui/react";
 
 import { Button } from "../ui/button";
-import { postData, putData } from "../../utils";
 import { toaster } from "../ui/toaster";
 import TodoItem from "./TodoItem";
+import { useDispatch } from "react-redux";
+import {
+  addItemsOnCheckList,
+  silentFetchCardCheckLists,
+} from "../../redux/actions/cardAction";
 
 export default function Todo({
   checkItems,
   id,
   setReloadChecklist,
   deleteItemOnCheckList,
-  card,
+  checklist,
 }) {
   const [openItemInput, setOpenItemInput] = useState(false);
   const [item, setItem] = useState("");
+  const dispatch = useDispatch();
+  const { idCard } = checklist;
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
-      addItemsOnCheckList();
+      handleAddItemsOnCheckList();
     } else if (e.key === "Escape") {
       setOpenItemInput(false);
     }
   }
 
-  function addItemsOnCheckList() {
+  async function handleAddItemsOnCheckList() {
     if (item.trim().length == 0) return;
 
-    const url = `${
-      import.meta.env.VITE_CHECKLISTS_BASE_URL
-    }/${id}/checkItems?name=${item}&key=${
-      import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
+    await dispatch(addItemsOnCheckList({ id, item }));
 
-    const promise = postData(url).then(() => {
-      setItem("");
-      setReloadChecklist((prev) => !prev);
-    });
-
-    toaster.promise(promise, {
-      success: {
+    if (addItemsOnCheckList.fulfilled) {
+      toaster.success({
         title: "Your checklist item has been successfully added!",
         description: "Looks great",
-      },
-      error: {
+      });
+      setItem("");
+      dispatch(silentFetchCardCheckLists({ id: idCard }));
+    } else if (addItemsOnCheckList.rejected) {
+      toaster.error({
         title: "Failed to add items on checklist!",
         description: "Something wrong with the addition",
-      },
-      loading: {
-        title: "Adding item on checklist...",
-        description: "Please wait",
-      },
-    });
-  }
-
-  function changeTodoStatus(isComplete, itemId) {
-    const url = `${import.meta.env.VITE_CARD_DETAILS_BASE_URL}/${
-      card.idCard
-    }/checkItem/${itemId}?state=${
-      isComplete === "incomplete" ? "complete" : "incomplete"
-    }&key=${import.meta.env.VITE_TRELLO_API_KEY}&token=${
-      import.meta.env.VITE_TRELLO_TOKEN
-    }`;
-
-    const promise = putData(url).then(() => {
-      setReloadChecklist((prev) => !prev);
-    });
-
-    toaster.promise(promise, {
-      success: {
-        title: "Your todo status has been changed successfully!",
-        description: "Looks great",
-      },
-      error: {
-        title: "Failed to change todo status!",
-        description: "Something wrong with the addition",
-      },
-      loading: {
-        title: "Change todo status...",
-        description: "Please wait",
-      },
-    });
+      });
+    }
   }
 
   return (
@@ -90,9 +57,8 @@ export default function Todo({
           <TodoItem
             key={index}
             item={item}
-            card={card}
+            checklist={checklist}
             deleteItemOnCheckList={deleteItemOnCheckList}
-            changeTodoStatus={changeTodoStatus}
             setReloadChecklist={setReloadChecklist}
           />
         ))}
@@ -112,7 +78,7 @@ export default function Todo({
               <Button
                 colorPalette={"cyan"}
                 variant="surface"
-                onClick={addItemsOnCheckList}
+                onClick={handleAddItemsOnCheckList}
               >
                 Add
               </Button>

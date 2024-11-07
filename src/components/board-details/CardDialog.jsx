@@ -1,7 +1,7 @@
+import { useRef, useState } from "react";
 import { Box, Card, Editable, Flex, Text } from "@chakra-ui/react";
 import { BsCardChecklist } from "react-icons/bs";
 import { IoArchive } from "react-icons/io5";
-import { useRef, useState } from "react";
 
 import {
   DialogBody,
@@ -55,6 +55,7 @@ export default function CardDialog({ card, deleteCard, setReloadListCards }) {
       loading: { title: "Updating card name...", description: "Please wait" },
     });
   }
+
   return (
     <DialogRoot lazyMount preventScroll size={"lg"} initialFocusEl={initRef}>
       <DialogTrigger asChild>

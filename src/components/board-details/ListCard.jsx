@@ -164,8 +164,8 @@ export default function ListCard({ list, archiveList }) {
             ? [1, 2].map((_, index) => <Skeleton height="10" key={index} />)
             : cards.map((card, index) => (
                 <CardComponent
-                  card={card}
                   key={index}
+                  card={card}
                   deleteCard={deleteCard}
                   setReloadListCards={setReloadListCards}
                 />

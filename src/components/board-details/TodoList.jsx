@@ -18,14 +18,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useDispatch } from "react-redux";
+import {
+  deleteChecklist,
+  silentFetchCardCheckLists,
+} from "../../redux/actions/cardAction";
 
 export default function TodoList({
-  card,
+  checklist,
   setReloadChecklist,
   deleteItemOnCheckList,
-  deleteChecklist,
 }) {
-  const { id, name, checkItems } = card;
+  const { id, name, checkItems } = checklist;
   const [checklistName, setChecklistName] = useState(name);
 
   function keyEventHandler(e) {
@@ -84,7 +88,7 @@ export default function TodoList({
             <Editable.Input />
           </Editable.Root>
         </Text>
-        <ChecklistDeleteConfirm deleteChecklist={deleteChecklist} id={id} />
+        <ChecklistDeleteConfirm checklist={checklist} />
       </Flex>
 
       {checkItems?.length > 0 ? (
@@ -92,17 +96,36 @@ export default function TodoList({
       ) : null}
 
       <Todo
-        checkItems={checkItems}
         id={id}
+        checkItems={checkItems}
         setReloadChecklist={setReloadChecklist}
         deleteItemOnCheckList={deleteItemOnCheckList}
-        card={card}
+        checklist={checklist}
       />
     </Flex>
   );
 }
 
-function ChecklistDeleteConfirm({ deleteChecklist, id }) {
+function ChecklistDeleteConfirm({ checklist }) {
+  const { id, idCard } = checklist;
+  const dispatch = useDispatch();
+
+  async function handleDeleteChecklist() {
+    await dispatch(deleteChecklist({ id }));
+    if (deleteChecklist.fulfilled) {
+      toaster.success({
+        title: "Your checklist has been deleted successfully!",
+        description: "Looks great",
+      });
+      dispatch(silentFetchCardCheckLists({ id: idCard }));
+    } else if (deleteChecklist.rejected) {
+      toaster.error({
+        title: "Failed to delete checklist!",
+        description: "Something wrong with the deletion",
+      });
+    }
+  }
+
   return (
     <DialogRoot role="alertdialog" placement={"center"}>
       <DialogTrigger asChild>
@@ -125,7 +148,7 @@ function ChecklistDeleteConfirm({ deleteChecklist, id }) {
             <Button variant="outline">Cancel</Button>
           </DialogActionTrigger>
           <DialogActionTrigger asChild>
-            <Button colorPalette="red" onClick={() => deleteChecklist(id)}>
+            <Button colorPalette="red" onClick={handleDeleteChecklist}>
               Delete
             </Button>
           </DialogActionTrigger>

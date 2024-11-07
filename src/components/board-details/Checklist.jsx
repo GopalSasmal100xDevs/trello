@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -8,83 +9,57 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { IoMdCheckboxOutline } from "react-icons/io";
-import { useCallback, useEffect, useState } from "react";
 import { MdPlaylistRemove } from "react-icons/md";
 
 import { Button } from "../ui/button";
 import { Field } from "../ui/field";
-import { deleteData, getData, postData } from "../../utils";
+import { deleteData } from "../../utils";
 import { toaster } from "../ui/toaster";
 import TodoList from "./TodoList";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addNewCheckList,
+  fetchCardCheckLists,
+  silentFetchCardCheckLists,
+} from "../../redux/actions/cardAction";
 
 export default function CheckList({ card }) {
   const { id } = card;
+  const dispatch = useDispatch();
   const [openCheckListInput, setOpenCheckListInput] = useState(false);
   const [checklistTitle, setChecklistTitle] = useState("");
-  const [cards, setCards] = useState([]);
-  const [cardsLoading, setCardsLoading] = useState(true);
   const [reloadChecklist, setReloadChecklist] = useState(false);
+  const { loading, cardCheckLists } = useSelector(
+    (state) => state.activeCard.card
+  );
 
   function keyEventHandler(e) {
     if (e.key === "Enter") {
-      addChecklist();
+      handleAddNewCheckList();
     } else if (e.key === "Escape") {
       setOpenCheckListInput(false);
     }
   }
 
-  function addChecklist() {
+  async function handleAddNewCheckList() {
     if (checklistTitle.trim().length == 0) return;
+    await dispatch(addNewCheckList({ id, title: checklistTitle }));
 
-    const url = `${
-      import.meta.env.VITE_CARD_DETAILS_BASE_URL
-    }/${id}/checklists?name=${checklistTitle}&key=${
-      import.meta.env.VITE_TRELLO_API_KEY
-    }&token=${import.meta.env.VITE_TRELLO_TOKEN}`;
-
-    const promise = postData(url).then(() => {
+    if (addNewCheckList.fulfilled) {
       setChecklistTitle("");
-      setOpenCheckListInput(false);
-    });
-
-    toaster.promise(promise, {
-      success: {
+      toaster.success({
         title: "Your checklist has been created successfully!",
         description: "Looks great",
-      },
-      error: {
+      });
+      setOpenCheckListInput(false);
+      dispatch(silentFetchCardCheckLists({ id }));
+    } else {
+      toaster.error({
         title: "Failed to create checklist!",
         description: "Something wrong with the creation",
-      },
-      loading: {
-        title: "Adding items on checklist...",
-        description: "Please wait",
-      },
-    });
+      });
+    }
   }
-
-  const fetchCheckList = useCallback(
-    async (id) => {
-      const url = `${
-        import.meta.env.VITE_CARD_DETAILS_BASE_URL
-      }/${id}/checklists?key=${import.meta.env.VITE_TRELLO_API_KEY}&token=${
-        import.meta.env.VITE_TRELLO_TOKEN
-      }`;
-
-      try {
-        const response = await getData(url);
-        setCards(response.data);
-      } catch (err) {
-        toaster.create({
-          description: "Failed to load Checklist!",
-          type: "error",
-        });
-      } finally {
-        setCardsLoading(false);
-      }
-    },
-    [id, reloadChecklist]
-  );
 
   function deleteItemOnCheckList(idCheckItem) {
     const url = `${
@@ -136,8 +111,8 @@ export default function CheckList({ card }) {
   }
 
   useEffect(() => {
-    fetchCheckList(id);
-  }, [id, openCheckListInput, reloadChecklist]);
+    dispatch(fetchCardCheckLists({ id }));
+  }, [id]);
 
   return (
     <Box>
@@ -170,14 +145,14 @@ export default function CheckList({ card }) {
             </Stack>
           </Card.Body>
           <Card.Footer justifyContent="flex-start">
-            <Button colorPalette="cyan" onClick={addChecklist}>
+            <Button colorPalette="cyan" onClick={handleAddNewCheckList}>
               Add
             </Button>
           </Card.Footer>
         </Card.Root>
       ) : null}
 
-      {cardsLoading ? (
+      {loading ? (
         <Flex flexDirection={"column"} gap={10} pt={10}>
           {[1, 2].map((_, index) => (
             <Stack flex="1" key={index}>
@@ -188,10 +163,10 @@ export default function CheckList({ card }) {
         </Flex>
       ) : (
         <Flex flexDirection={"column"} gap={10}>
-          {cards.length > 0 ? (
-            cards.map((card, index) => (
+          {cardCheckLists.length > 0 ? (
+            cardCheckLists.map((checklist, index) => (
               <TodoList
-                card={card}
+                checklist={checklist}
                 key={index}
                 setReloadChecklist={setReloadChecklist}
                 deleteItemOnCheckList={deleteItemOnCheckList}
